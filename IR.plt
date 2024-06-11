@@ -5,11 +5,10 @@
 set title "Filter Impulse Response"
 set xlabel "n"
 set ylabel "64-bit Value"
-set yrange [0:1]
 
 set terminal windows
 
-plot "data/IR.dat" with impulses linewidth 10
+plot "data/IR.dat" with impulses linewidth 10 title 'EMA, a = 1/8'
 
 set terminal png size 1920,1080
 set out "data/IR.png"

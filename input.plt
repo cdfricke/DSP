@@ -8,7 +8,7 @@ set ylabel "64-bit Value"
 
 set terminal windows
 
-plot "data/input.dat" with lines
+plot "data/input.dat" with lines title 'Unfiltered Input Signal'
 
 set terminal png size 1920,1080
 set out "data/input.png"

@@ -10,7 +10,7 @@ set ylabel "64-Bit Value"
 set terminal windows
 
 plot "data/input.dat" with lines lw 1,\
-     "data/output.dat" with lines lw 3 lt rgb "red"
+     "data/output.dat" with lines lw 3 lt rgb "red" title "EMA, a = 1/8"
 
 set terminal png size 1920,1080
 set out "data/moving_avg.png"

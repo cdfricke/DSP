@@ -10,7 +10,7 @@ set terminal windows
 
 # PLOT SINGLE-FILTERED RESULTS
 set terminal windows
-plot "data/output.dat" with lines
+plot "data/output.dat" with lines title 'Filtered Output Signal'
 
 set terminal png size 1920,1080
 set out "data/output.png"
