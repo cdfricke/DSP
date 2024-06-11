@@ -8,6 +8,7 @@
 #include "DSP.h"
 using namespace std;
 typedef complex<double> dcomp;
+extern const double PI;
 
 // Programmer: Connor Fricke (cd.fricke23@gmail.com)
 // File: filter_design.cpp
@@ -26,29 +27,16 @@ int main()
     // *** FILTERED SIGNAL ***
     vector<double> y0;
     double alpha = 0.125;                 
-    // FIRST PASS
-    double delay_reg_0 = 0;
-    for (int i = 0; i < x.size(); i++)
-    {
-        double y_i = 0;
-        if (FIR) LOWPASS_FIR(x[i], y_i, alpha, delay_reg_0);
-        else AVERAGER_IIR(x[i], y_i, alpha, delay_reg_0);
-        y0.push_back(y_i);
-    }
+    if (FIR) LOWPASS_FIR(x, y0, alpha);
+    else AVERAGER_IIR(x, y0, alpha);
 
     // *** IMPULSE RESPONSE ***
     vector<double> impulse(10, 0);
     impulse[0] = 1;
 
     vector<double> h;
-    double delay_reg_1 = 0;
-    for (int i = 0; i < impulse.size(); i++)
-    {
-        double h_i = 0;
-        if (FIR) LOWPASS_FIR(impulse[i], h_i, alpha, delay_reg_1);
-        else AVERAGER_IIR(impulse[i], h_i, alpha, delay_reg_1);
-        h.push_back(h_i);
-    }
+    if (FIR) LOWPASS_FIR(impulse, h, alpha);
+    else AVERAGER_IIR(impulse, h, alpha);
 
     // *** FREQUENCY RESPONSE ***
     dcomp I = -1;
@@ -86,5 +74,5 @@ int main()
     system("gnuplot --persist \"IR.plt\"");
     system("gnuplot --persist \"freq_response.plt\"");
 
-    return 0;
+    return EXIT_SUCCESS;
 }

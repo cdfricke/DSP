@@ -1,8 +1,7 @@
 #include "DSP.h"
 
+extern const double PI = 2 * asin(1);
 typedef complex<double> dcomp;
-
-// ** FUNCTION DEFINITIONS **
 
 double getRandomFloat(const double lower, const double upper)
 {
@@ -34,7 +33,8 @@ void generateSignal(vector<double> &signal, const int TARGET_LENGTH)
     }
 }
 
-void DFT(vector<double> x, vector<double> k_range, vector<complex<double>> &output)
+
+void DFT(const vector<double>& x, const vector<double>& k_range, vector<complex<double>>& output)
 {
     complex<double> I = -1;
     I = sqrt(I);
@@ -53,18 +53,27 @@ void DFT(vector<double> x, vector<double> k_range, vector<complex<double>> &outp
     }
 }
 
-void LOWPASS_FIR(const double input, double &output, const double alpha, double &delay0)
+void LOWPASS_FIR(const vector<double>& input, vector<double>& output, const double alpha)
 {
-    // DIFFERENCE EQUATION:
-    // y[n] = a*x[n] + (1-a)*x[n-1];
-    output = (alpha * input) + ((1.0 - alpha) * delay0);
-    delay0 = input;
+    double delay0 = 0;
+    for (double in : input) 
+    {
+        double out = (alpha * in) + ((1.0 - alpha) * delay0);
+        output.push_back(out);
+        delay0 = in;
+    }
 }
 
-void AVERAGER_IIR(const double input, double &output, const double alpha, double &delay0)
+
+void AVERAGER_IIR(const vector<double>& input, vector<double>& output, const double alpha)
 {
-    // DIFFERENCE EQUATION:
-    // y[n] = a*x[n] + (1-a)*y[n-1]
-    output = (alpha * input) + ((1.0 - alpha) * delay0);
-    delay0 = output;
+    double delay0 = 0;
+    for (double in : input)
+    {
+        // DIFFERENCE EQUATION:
+        // y[n] = a*x[n] + (1-a)*y[n-1]
+        double out = (alpha * in) + ((1.0 - alpha) * delay0);
+        delay0 = out;
+        output.push_back(out);
+    }
 }
