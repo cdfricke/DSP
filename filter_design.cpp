@@ -18,27 +18,30 @@ const double PI = 2 * asin(1);
 // ** FUNCTION PROTOTYPES **
 double getRandomFloat(const double, const double);
 void generateSignal(vector<double>&, const int);
-void LOWPASS_FIR(const double input, double &output, const double a0, const double a1, double &delay0);
+void LOWPASS_FIR(const double input, double &output, const double alpha, double &delay0);
+void AVERAGER_IIR(const double input, double &output, const double alpha, double &delay0);
 void DFT(vector<double> x, vector<double> k_range, vector<dcomp> &output);
 
 // ** MAIN PROGRAM **
 int main()
 {
-    ofstream fout;
+    bool FIR = false;
     // *** RANDOMIZED, NOISY SIGNAL ***
     int SIGNAL_LENGTH = 1000;
     vector<double> x;
     generateSignal(x, SIGNAL_LENGTH);
 
     // *** FILTERED SIGNAL ***
-    vector<double> y;
-    vector<double> a = {0.6, 0.4};
+    vector<double> y0;
+    double alpha = 0.125;                 
+    // FIRST PASS
     double delay_reg_0 = 0;
     for (int i = 0; i < x.size(); i++)
     {
         double y_i = 0;
-        LOWPASS_FIR(x[i], y_i, a[0], a[1], delay_reg_0);
-        y.push_back(y_i);
+        if (FIR) LOWPASS_FIR(x[i], y_i, alpha, delay_reg_0);
+        else AVERAGER_IIR(x[i], y_i, alpha, delay_reg_0);
+        y0.push_back(y_i);
     }
 
     // *** IMPULSE RESPONSE ***
@@ -50,12 +53,12 @@ int main()
     for (int i = 0; i < impulse.size(); i++)
     {
         double h_i = 0;
-        LOWPASS_FIR(impulse[i], h_i, a[0], a[1], delay_reg_1);
+        if (FIR) LOWPASS_FIR(impulse[i], h_i, alpha, delay_reg_1);
+        else AVERAGER_IIR(impulse[i], h_i, alpha, delay_reg_1);
         h.push_back(h_i);
     }
 
     // *** FREQUENCY RESPONSE ***
-    fout.open("data/freq_response.dat");
     dcomp I = -1;
     I = sqrt(I);
     // set frequency range
@@ -67,23 +70,27 @@ int main()
     }
     DFT(h, k_vals, Freq_Response);
     if (k_vals.size() != Freq_Response.size()) return EXIT_FAILURE;
-    for (int i = 0; i < k_vals.size(); i++) fout << k_vals[i] << ' ' << abs(Freq_Response[i]) << endl;
+    
 
     // *** SAVE DATA ***
-    fout.close();
+    ofstream fout;
     fout.open("data/input.dat");
     for (int i = 0; i < x.size(); i++) fout << i << ' ' << x[i] << endl;
     fout.close();
     fout.open("data/output.dat");
-    for (int i = 0; i < y.size(); i++) fout << i << ' ' << y[i] << endl;
+    for (int i = 0; i < y0.size(); i++) fout << i << ' ' << y0[i] << endl;
     fout.close();
     fout.open("data/IR.dat");
     for (int i = 0; i < h.size(); i++) fout << i << ' ' << h[i] << endl;
     fout.close();
+    fout.open("data/freq_response.dat");
+    for (int i = 0; i < k_vals.size(); i++) fout << k_vals[i] << ' ' << abs(Freq_Response[i]) << endl;
+    fout.close();
 
     // *** PLOT WITH GNUPLOT ***
     system("gnuplot --persist \"input.plt\"");
-    system("gnuplot --persist \"filtered.plt\"");
+    system("gnuplot --persist \"output.plt\"");
+    system("gnuplot --persist \"moving_avg.plt\"");
     system("gnuplot --persist \"IR.plt\"");
     system("gnuplot --persist \"freq_response.plt\"");
 
@@ -120,15 +127,6 @@ void generateSignal(vector<double>& signal, const int TARGET_LENGTH)
     }
 }
 
-void LOWPASS_FIR(const double input, double &output, const double a0, const double a1, double &delay0)
-{
-    // rule: 2 coefficients, a0 and a1 -> a0 + a1 = 1
-    // DIFFERENCE EQUATION:
-    // y[n] = a0*x[n] + a1*x[n-1];
-    output = (a0 * input) + (a1 * delay0);
-    delay0 = input;
-}
-
 void DFT(vector<double> x, vector<double> k_range, vector<dcomp>& output)
 {
     dcomp I = -1;
@@ -146,4 +144,20 @@ void DFT(vector<double> x, vector<double> k_range, vector<dcomp>& output)
         }
         output.push_back(X);
     }
+}
+
+void LOWPASS_FIR(const double input, double &output, const double alpha, double &delay0)
+{
+    // DIFFERENCE EQUATION:
+    // y[n] = a*x[n] + (1-a)*x[n-1];
+    output = (alpha * input) + ((1.0 - alpha) * delay0);
+    delay0 = input;
+}
+
+void AVERAGER_IIR(const double input, double& output, const double alpha, double& delay0)
+{
+    // DIFFERENCE EQUATION:
+    // y[n] = a*x[n] + (1-a)*y[n-1]
+    output = (alpha * input) + ((1.0 - alpha) * delay0);
+    delay0 = output;
 }

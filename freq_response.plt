@@ -8,7 +8,7 @@ set ylabel "Gain"
 
 set terminal windows
 
-plot "data/freq_response.dat" with impulses linewidth 10
+plot "data/freq_response.dat" using ($1):(20*log10($2)) with linespoints linewidth 10
 
 set terminal png size 1920,1080
 set out "data/freq_response.png"

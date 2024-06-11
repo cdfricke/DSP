@@ -11,5 +11,5 @@ set terminal windows
 plot "data/input.dat" with lines
 
 set terminal png size 1920,1080
-set out "data/noise.png"
+set out "data/input.png"
 replot
