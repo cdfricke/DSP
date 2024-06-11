@@ -1,10 +1,18 @@
+/*
+Programmer: Connor Fricke (cd.fricke23@gmail.com)
+File: DSP.h
+Latest Revision: 11-June-2024
+Synopsis: Header File for DSP function library
+*/
+
 #ifndef DSP_H
 #define DSP_H
 
 #include <random>
 #include <complex>
-
 using namespace std;
+
+typedef complex<double> dcomp;
 
 // getRandomFloat():
 // Simply returns a single random number generated with the Mersenne Twister (mt19937)

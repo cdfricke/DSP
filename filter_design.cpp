@@ -7,7 +7,6 @@
 #include <cmath>
 #include "DSP.h"
 using namespace std;
-typedef complex<double> dcomp;
 extern const double PI;
 
 // Programmer: Connor Fricke (cd.fricke23@gmail.com)
@@ -19,10 +18,14 @@ extern const double PI;
 int main()
 {
     bool FIR = false;
-    // *** RANDOMIZED, NOISY SIGNAL ***
     int SIGNAL_LENGTH = 1000;
+
+    // NOISY SIGNAL
     vector<double> x;
     generateSignal(x, SIGNAL_LENGTH);
+
+    // UNITY SIGNAL
+    // vector<double> x(100, 1.0);
 
     // *** FILTERED SIGNAL ***
     vector<double> y0;
@@ -48,9 +51,8 @@ int main()
     {
         k_vals.push_back(i);
     }
+    // take DFT over range of k_vals, store result in Freq_response vector
     DFT(h, k_vals, Freq_Response);
-    if (k_vals.size() != Freq_Response.size()) return EXIT_FAILURE;
-    
 
     // *** SAVE DATA ***
     ofstream fout;

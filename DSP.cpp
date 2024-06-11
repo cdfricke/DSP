@@ -1,7 +1,13 @@
+/*
+Programmer: Connor Fricke (cd.fricke23@gmail.com)
+File: DSP.cpp
+Latest Revision: 11-June-2024
+Synopsis: Implementation File for DSP function library
+*/
+
 #include "DSP.h"
 
 extern const double PI = 2 * asin(1);
-typedef complex<double> dcomp;
 
 double getRandomFloat(const double lower, const double upper)
 {
