@@ -1,9 +1,9 @@
 # Programmer: Connor Fricke (cd.fricke23@gmail.com)
 # File: output.plt
-# Latest Revision: 7-June-2024
+# Latest Revision: 13-June-2024
 
 set title "Filtered Signal"
-set xlabel "n"
+set xlabel "t"
 set ylabel "64-bit Value"
 
 set terminal windows

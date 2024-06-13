@@ -1,7 +1,7 @@
 /*
 Programmer: Connor Fricke (cd.fricke23@gmail.com)
 File: DSP.cpp
-Latest Revision: 11-June-2024
+Latest Revision: 13-June-2024
 Synopsis: Implementation File for DSP function library
 */
 
@@ -18,16 +18,17 @@ double getRandomFloat(const double lower, const double upper)
     return distribution(generator);
 }
 
-void generateSignal(vector<double> &signal, const int TARGET_LENGTH)
+vector<double> generateSignal(const vector<double> t_Samples)
 {
+    vector<double> output;
     // initialize for the first step
     double currentValue = 0.5;
     double stepSize = 0.0;
     bool stepUp = false;
-    while (signal.size() < TARGET_LENGTH)
+    while(output.size() < t_Samples.size())
     {
         // add current value to signal vector
-        signal.push_back(currentValue);
+        output.push_back(currentValue);
         // decide on stepSize, step direction
         stepSize = getRandomFloat(0.0, 0.05);
         stepUp = (getRandomFloat(0.0, 1.0) > 0.5);
@@ -37,12 +38,33 @@ void generateSignal(vector<double> &signal, const int TARGET_LENGTH)
         else
             currentValue -= stepSize;
     }
+    return output;
 }
 
 
-void DFT(const vector<double>& x, const vector<double>& k_range, vector<complex<double>>& output)
+vector<double> generateSignal(const vector<double>& t_values, const vector<SignalComponent> &components)
 {
-    complex<double> I = -1;
+    vector<double> output;
+    for (double t : t_values)
+    {
+        double currentValue = 0.0;
+        
+        for (SignalComponent c : components)
+        {
+            // cos takes radians argument so we multiply by 2PI because freq is units of Hz
+            currentValue += c.coeff * cos(2.0 * PI * c.freq * t);
+        }
+        
+        output.push_back(currentValue);
+    }
+    return output;
+}
+
+
+vector<dcomp> DFT(const vector<double> &x, const vector<double> &k_range)
+{
+    vector<dcomp> output;
+    dcomp I = -1;
     I = sqrt(I);
 
     // X(k) = sum_{n=0}^{N-1}{x[n]*W_N^{kn}}
@@ -57,10 +79,12 @@ void DFT(const vector<double>& x, const vector<double>& k_range, vector<complex<
         }
         output.push_back(X);
     }
+    return output;
 }
 
-void LOWPASS_FIR(const vector<double>& input, vector<double>& output, const double alpha)
+vector<double> LOWPASS_FIR(const vector<double>& input, const double alpha)
 {
+    vector<double> output;
     double delay0 = 0;
     for (double in : input) 
     {
@@ -68,11 +92,13 @@ void LOWPASS_FIR(const vector<double>& input, vector<double>& output, const doub
         output.push_back(out);
         delay0 = in;
     }
+    return output;
 }
 
 
-void AVERAGER_IIR(const vector<double>& input, vector<double>& output, const double alpha)
+vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha)
 {
+    vector<double> output;
     double delay0 = 0;
     for (double in : input)
     {
@@ -82,4 +108,5 @@ void AVERAGER_IIR(const vector<double>& input, vector<double>& output, const dou
         delay0 = out;
         output.push_back(out);
     }
+    return output;
 }

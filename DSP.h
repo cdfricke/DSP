@@ -1,7 +1,7 @@
 /*
 Programmer: Connor Fricke (cd.fricke23@gmail.com)
 File: DSP.h
-Latest Revision: 11-June-2024
+Latest Revision: 13-June-2024
 Synopsis: Header File for DSP function library
 */
 
@@ -10,11 +10,19 @@ Synopsis: Header File for DSP function library
 
 #include <random>
 #include <complex>
+#include <vector>
+#include <cmath>
 using namespace std;
+
+struct SignalComponent
+{
+    double coeff;
+    double freq;
+};
 
 typedef complex<double> dcomp;
 
-// getRandomFloat():
+// getRandomFloat(const double, const double):
 // Simply returns a single random number generated with the Mersenne Twister (mt19937)
 // over a uniform distribution between the upper and lower bounds parameters.
 // @@ parameters:
@@ -22,28 +30,39 @@ typedef complex<double> dcomp;
 //  - const double upper: upper bound to uniform distribution
 double getRandomFloat(const double lower, const double upper);
 
-
-// generateSignal():
+// generateSignal(vector<double>&, const int):
 // creates a signal using random walk behavior for the purposes of filter analysis
 // step size randomly distributed between 0 and 0.05 for each step
 // step direction chosen by 50-50 probability.
 // @@ parameters:
-//  - vector<double>& signal: output of function, i.e. the randomly generated signal
-//  - const int TARGET_LENGTH: function generates signal until the resulting vector is of size = TARGET_LENGTH
-void generateSignal(vector<double>& signal, const int TARGET_LENGTH);
+//  - const vector<double>& t_Samples: function generates signal until the resulting vector is of equal size
+// @@ return:
+//  - vector<double> signal: output of function, i.e. the randomly generated signal
+vector<double> generateSignal(const vector<double> t_Samples);
 
-// LOWPASS_FIR():
+
+// generateSignal(vector<double>& signal, const vector<SignalComponent>&):
+// creates a signal with a Fourier sine series expansion method from frequency and coefficients 
+// stored by the vector parameter. Discretizes output signal over x_values vector parameter.
+// @@ parameters:
+//  - const vector<double>& x_values: discretization vector, i.e. calculate the signal value at these x_values
+//  - const vector<SignalComponent>& components: sine wave signal components, with their frequency and coefficient stored in a struct
+// @@ return:
+// 
+vector<double> generateSignal(const vector<double> &x_values, const vector<SignalComponent> &components);
+
+// LOWPASS_FIR(const vectro<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an FIR Filter
 // to the input vector characterized by the difference equation:
 //   y[n] = a*x[n] + (1-a)*x[n-1]
 // @@ parameters:
 //  - const vector<double>& input: represents an unfiltered signal
-//  - vector<double>& output: resulting filtered signal
 //  - const double alpha: defines both taps (coefficients) of the FIR filter via {a, 1-a}.
-void LOWPASS_FIR(const vector<double>& input, vector<double> &output, const double alpha);
+// @@ return:
+//  - vector<double> output: resulting filtered signal
+vector<double> LOWPASS_FIR(const vector<double> &input, const double alpha);
 
-
-// AVERAGER_IIR():
+// AVERAGER_IIR(const vector<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an IIR Filter
 // to the input vector characterized by the difference equation:
 //   y[n] = a*x[n] + (1-a)*y[n-1]
@@ -51,17 +70,19 @@ void LOWPASS_FIR(const vector<double>& input, vector<double> &output, const doub
 // It is well known as an exponential averaging filter.
 // @@ parameters:
 //  - const vector<double>& input: represents an unfiltered signal
-//  - vector<double>& output: resulting filtered signal
 //  - const double alpha: defines both taps (coefficients) of the IIR filter via {a, 1-a}
-void AVERAGER_IIR(const vector<double>& input, vector<double> &output, const double alpha);
+// @@ return:
+//  - vector<double>& output: resulting filtered signal
+vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha);
 
 
-// DFT:
+// DFT(const vector<double>&, const vector<double>&, vector<dcomp> out):
 // Takes the discrete Fourier Transform of a signal for discrete k values.
 // @@ parameters:
 //  - const vector<double>& x: input signal to be transformed
 //  - const vector<double>& k_range: represents the discrete values of k for the DFT to be calculated over
+// @@ return:
 //  - vector<complex<double>>& output: resulting transformed signal. each value is a complex number with real and imaginary components.
-void DFT(const vector<double>& x, const vector<double>& k_range, vector<complex<double>>& output);
+vector<dcomp> DFT(const vector<double>& x, const vector<double>& k_range);
 
 #endif

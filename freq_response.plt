@@ -1,9 +1,9 @@
 # Programmer: Connor Fricke (cd.fricke23@gmail.com)
 # File: freq_response.plt
-# Latest Revision: 7-June-2024
+# Latest Revision: 13-June-2024
 
-set title "Frequency Response, FIR Lowpass"
-set xlabel "frequency"
+set title "Frequency Response"
+set xlabel "f/f_N"
 set ylabel "Gain"
 
 set terminal windows
