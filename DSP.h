@@ -29,6 +29,7 @@ typedef complex<double> dcomp;
 //  - const double upper: upper bound to uniform distribution
 double getRandomFloat(const double lower, const double upper);
 
+
 // generateSignal(vector<double>&, const int):
 // creates a signal using random walk behavior for the purposes of filter behavior analysis
 // step size randomly distributed between 0 and 0.05 for each step
@@ -50,6 +51,7 @@ vector<double> generateSignal(const vector<double> t_Samples);
 // 
 vector<double> generateSignal(const vector<double> &x_values, const vector<SignalComponent> &components);
 
+
 // LOWPASS_FIR(const vectro<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an FIR Filter
 // to the input vector characterized by the difference equation:
@@ -60,6 +62,7 @@ vector<double> generateSignal(const vector<double> &x_values, const vector<Signa
 // @@ return:
 //  - vector<double> output: resulting filtered signal
 vector<double> LOWPASS_FIR(const vector<double> &input, const double alpha);
+
 
 // AVERAGER_IIR(const vector<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an IIR Filter
@@ -79,7 +82,7 @@ vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha);
 // Takes the discrete Fourier Transform of a signal for discrete k values.
 // @@ parameters:
 //  - const vector<double>& x: input signal to be transformed
-//  - const vector<double>& k_range: represents the discrete values of k for the DFT to be calculated over
+//  - const vector<int>& k_range: represents the discrete values of k for the DFT to be calculated over. must range from -N/2 to N/2
 // @@ return:
 //  - vector<complex<double>>& output: resulting transformed signal. each value is a complex number with real and imaginary components.
 vector<dcomp> DFT(const vector<double>& x, const vector<int>& k_range);
