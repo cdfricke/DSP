@@ -87,4 +87,11 @@ vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha);
 //  - vector<complex<double>>& output: resulting transformed signal. each value is a complex number with real and imaginary components.
 vector<dcomp> DFT(const vector<double>& x, const vector<int>& k_range);
 
+
+// goertzelFilter_1(const vector<double>&, const int):
+// Performs the 1st - order recursive implementation of a Goertzel Filter for a single integer k-value 
+// of an input signal to calculate X(k) = y[N] where y is the output signal of the filter.
+// y_k[n] = exp(i * 2 * PI * k / N)*y[n-1]
+vector<complex<double>> goertzelFilter_1(const vector<double>& input, const int k);
+
 #endif

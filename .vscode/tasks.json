@@ -5,12 +5,12 @@
             "label": "C/C++: g++.exe build active file",
             "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
             "args": [
-                "-fdiagnostics-color=always",
                 "-g",
                 "${fileDirname}\\filter_design.cpp",
                 "${fileDirname}\\DSP.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-O0",
                 "-I",
                 "${fileDirname}"
             ],
