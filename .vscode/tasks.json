@@ -10,7 +10,8 @@
                 "${fileDirname}\\DSP.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-O0",
+                "-O3",
+                "-std=c++17",
                 "-I",
                 "${fileDirname}"
             ],
