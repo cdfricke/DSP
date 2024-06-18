@@ -1,7 +1,7 @@
 /*
 Programmer: Connor Fricke (cd.fricke23@gmail.com)
 File: DSP.h
-Latest Revision: 13-June-2024
+Latest Revision: 18-June-2024
 Synopsis: Header File for DSP function library
 */
 
@@ -30,7 +30,7 @@ typedef complex<double> dcomp;
 double getRandomFloat(const double lower, const double upper);
 
 // generateSignal(vector<double>&, const int):
-// creates a signal using random walk behavior for the purposes of filter analysis
+// creates a signal using random walk behavior for the purposes of filter behavior analysis
 // step size randomly distributed between 0 and 0.05 for each step
 // step direction chosen by 50-50 probability.
 // @@ parameters:

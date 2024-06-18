@@ -1,7 +1,7 @@
 /*
 Programmer: Connor Fricke (cd.fricke23@gmail.com)
 File: DSP.cpp
-Latest Revision: 13-June-2024
+Latest Revision: 18-June-2024
 Synopsis: Implementation File for DSP function library
 */
 

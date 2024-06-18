@@ -11,7 +11,7 @@ extern const double PI;
 
 // Programmer: Connor Fricke (cd.fricke23@gmail.com)
 // File: filter_design.cpp
-// Latest Revision: 7-June-2024
+// Latest Revision: 18-June-2024
 // Synopsis: Short program for testing software implementation of filter designs, as well as my DSP library.
 
 // ** MAIN PROGRAM **
