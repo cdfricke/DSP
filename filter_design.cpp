@@ -1,9 +1,6 @@
 #include <iostream>
-#include <vector>
-#include <random>
 #include <fstream>
 #include <cstdlib>
-#include <complex>
 #include <cassert>
 #include "DSP.h"
 using namespace std;
@@ -63,7 +60,7 @@ int main()
     else y0 = AVERAGER_IIR(x, alpha);
 
     // *** IMPULSE RESPONSE ***
-    vector<double> impulse(20, 0); // fifty zeros
+    vector<double> impulse(100, 0); // one hundred zeros
     impulse[0] = 1;
     vector<double> h; 
     if (FIR)
@@ -92,7 +89,7 @@ int main()
     for (int i = 0; i < h.size(); i++) fout << i << ' ' << h[i] << endl;
     fout.close();
     fout.open("data/freq_response.dat");
-    for (int i = 0; i < k_vals.size(); i++) fout << k_vals[i]/NYQUIST << ' ' << abs(Freq_Response[i]) << endl;
+    for (int i = 0; i < k_vals.size(); i++) fout << k_vals[i]/(float(N)*NYQUIST) << ' ' << abs(Freq_Response[i]) << endl;
     fout.close();
 
     // *** PLOT WITH GNUPLOT ***
