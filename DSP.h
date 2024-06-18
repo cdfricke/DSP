@@ -11,7 +11,6 @@ Synopsis: Header File for DSP function library
 #include <random>
 #include <complex>
 #include <vector>
-#include <cmath>
 using namespace std;
 
 struct SignalComponent
@@ -83,6 +82,6 @@ vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha);
 //  - const vector<double>& k_range: represents the discrete values of k for the DFT to be calculated over
 // @@ return:
 //  - vector<complex<double>>& output: resulting transformed signal. each value is a complex number with real and imaginary components.
-vector<dcomp> DFT(const vector<double>& x, const vector<double>& k_range);
+vector<dcomp> DFT(const vector<double>& x, const vector<int>& k_range);
 
 #endif

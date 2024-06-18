@@ -61,7 +61,7 @@ vector<double> generateSignal(const vector<double>& t_values, const vector<Signa
 }
 
 
-vector<dcomp> DFT(const vector<double> &x, const vector<double> &k_range)
+vector<dcomp> DFT(const vector<double> &x, const vector<int> &k_range)
 {
     vector<dcomp> output;
     dcomp I = -1;
