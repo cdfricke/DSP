@@ -11,8 +11,8 @@ import pandas as pd
 # ** IMPORT DATA **
 df = pd.read_csv("./data/ILAdata.csv", sep=',')
 
-filteredSignal_FPGA = np.array(df["filteredCos[18:0]"]) / (2**15)
-outputSignal_FPGA = np.array(df["outputCos[17:0]"]) / (2**14)
+filteredSignal_FPGA = np.array(df["filteredCos[18:0]"]) / (2**15)   # 19-bit data, 1.3.15
+outputSignal_FPGA = np.array(df["outputCos[17:0]"]) / (2**14)       # 18-bit data, 1.3.14
 time = np.array(df["Sample in Window"])
 
 # ** APPLY FILTER **
