@@ -37,7 +37,13 @@ int main()
     // to create a signal with sine wave components, you need a vector of SignalComponents,
     // and a vector of discrete t values which tells us where the samples of the signal are.
     // The SignalComponent initialized as {0.1, 5.0} corresponds to 0.2sin(5.0t) in the Fourier series, for example.
-    vector<SignalComponent> components{{0.5, 0.4}, {0.25, 0.1}, {0.25, 0.05}, {0.1, 0.8}};
+    // if we create a signal with all frequencies from zero to nyquist, we should get an impulsive signal
+    vector<SignalComponent> components;
+    for (double freq = 0.00; freq < NYQUIST; freq += 0.01)
+    {
+        SignalComponent newComp = {1.0, freq};
+        components.push_back(newComp);
+    }
     for (SignalComponent c : components)
     {
         assert(c.freq < NYQUIST);

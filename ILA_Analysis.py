@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# ** IMPORT DATA TO COMPARE **
+# ** IMPORT DATA **
 df = pd.read_csv("./data/iladata.csv", sep=',')
 
-filteredSignal_FPGA = np.array(df["filteredCos[17:0]"]) / (2**15)
-outputSignal_FPGA = np.array(df["outputCos[16:0]"]) / (2**14)
+filteredSignal_FPGA = np.array(df["filteredCos[18:0]"]) / (2**15)
+outputSignal_FPGA = np.array(df["outputCos[17:0]"]) / (2**14)
 time = np.array(df["Sample in Window"])
 
 # ** APPLY FILTER **
