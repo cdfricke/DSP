@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 # ** IMPORT DATA **
-df = pd.read_csv("./data/iladata.csv", sep=',')
+df = pd.read_csv("./data/ILAdata.csv", sep=',')
 
 filteredSignal_FPGA = np.array(df["filteredCos[18:0]"]) / (2**15)
 outputSignal_FPGA = np.array(df["outputCos[17:0]"]) / (2**14)
@@ -31,6 +31,25 @@ ax.plot(time, outputSignal_FPGA, label="FPGA ILA Signal Data")
 
 plt.legend()
 plt.xlim([0,150])
+plt.show()
+
+# ** PLOT ALL SIGNAL COMPONENTS **
+fig, axs = plt.subplots(4, 1, sharex=True)
+plt.xlim((0,150))
+fig.suptitle("Signal Components")
+fig.supxlabel("Sample #")
+
+cos_500kHz = np.array(df["cos_500kHz[15:0]"]) / (2**14)
+cos_1MHz = np.array(df["cos_1MHz[15:0]"]) / (2**14)
+cos_2MHz = np.array(df["cos_2MHz[15:0]"]) / (2**14)
+cos_2_8MHz = np.array(df["cos_2_8MHz_wc[15:0]"]) / (2**15)
+components = [cos_500kHz, cos_1MHz, cos_2MHz, cos_2_8MHz]
+labels = ["500 kHz", "1 MHz", "2 MHz", "2.8 MHz"]
+
+for i in range(axs.size):
+    axs[i].plot(time, components[i], label=labels[i])
+    axs[i].legend(loc='center right')
+
 plt.show()
 
 # ** PLOT FILTERED DATA **
