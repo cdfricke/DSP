@@ -39,10 +39,10 @@ plt.xlim((0,150))
 fig.suptitle("Signal Components")
 fig.supxlabel("Sample #")
 
-cos_500kHz = np.array(df["cos_500kHz[15:0]"]) / (2**14)
-cos_1MHz = np.array(df["cos_1MHz[15:0]"]) / (2**14)
-cos_2MHz = np.array(df["cos_2MHz[15:0]"]) / (2**14)
-cos_2_8MHz = np.array(df["cos_2_8MHz_wc[15:0]"]) / (2**15)
+cos_500kHz = np.array(df["cos_500kHz[15:0]"]) / (2**14)     # 16-bit data, 1.1.14 (1 sign bit, 1 integer bit, 14 fraction bits)
+cos_1MHz = np.array(df["cos_1MHz[15:0]"]) / (2**14)         # 16-bit data, 1.1.14
+cos_2MHz = np.array(df["cos_2MHz[15:0]"]) / (2**14)         # 16-bit data, 1.1.14
+cos_2_8MHz = np.array(df["cos_2_8MHz_wc[15:0]"]) / (2**15)  # 16-bit data, 1.0.15
 components = [cos_500kHz, cos_1MHz, cos_2MHz, cos_2_8MHz]
 labels = ["500 kHz", "1 MHz", "2 MHz", "2.8 MHz"]
 
