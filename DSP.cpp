@@ -131,3 +131,37 @@ vector<dcomp> goertzelFilter_1(const vector<double>& input, const int k)
     }
     return output;
 }
+
+vector<dcomp> goertzelFilter_2(const vector<double> &input, const int k)
+{
+    vector<dcomp> output;
+    dcomp I = -1;
+    I = sqrt(I);
+    int N = input.size();
+
+    // delay registers
+    dcomp d_reg_out0 = 0;
+    dcomp d_reg_out1 = 0;
+    dcomp d_reg_in0 = 0;
+
+    // compute constant coefficients
+    const double phase = 2.0 * PI * double(k) / double(N);
+    const dcomp W_Nk = exp(-I * phase);
+    const double cosCoeff = 2*cos(phase);
+
+    // type conversion
+    dcomp c_in;
+    for (double in : input)
+    {
+        c_in = complex(in, 0.0);
+        // DIFFERENCE EQUATION:
+        // y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
+        dcomp out = (c_in) - (W_Nk * d_reg_in0) + (cosCoeff * d_reg_out0) - (d_reg_out1);
+        
+        d_reg_out1 = d_reg_out0; // y[n-1] -> y[n-2]
+        d_reg_out0 = out;        // y[n] -> y[n-1]
+        d_reg_in0 = in;          // x[n] -> x[n-1]
+        output.push_back(out);
+    }
+    return output;
+}

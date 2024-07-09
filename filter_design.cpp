@@ -18,18 +18,23 @@ extern const double PI;
 int main()
 {
     // parameters
-    bool FIR = false;                       // decides which filter is applied. Both have two taps chosen by alpha
-    double alpha = 0.125;                   // filter coeffs are {a, 1-a}
-    double SAMPLING_RATE = 12.0e+06;        // 12 MHz CMOD clock frequency
-    double SAMPLING_PERIOD = 1.0 / SAMPLING_RATE;
-    double NYQUIST = SAMPLING_RATE / 2.0;
+    bool    FIR = false;                            // decides which filter is applied. Both have two taps chosen by alpha
+    double  alpha = 0.125;                          // filter coeffs are {a, 1-a}
+    double  SAMPLING_RATE = 12.0e+06;               // 12 MHz CMOD clock frequency
+    double  SAMPLING_PERIOD = 1.0 / SAMPLING_RATE;
+    double  NYQUIST = SAMPLING_RATE / 2.0;
 
     // *** USER-CREATED SIGNAL ***
     // to create a signal with sine wave components, you need a vector of SignalComponents,
     // and a vector of discrete t values which tells us where the samples of the signal are.
     // The SignalComponent initialized as {0.1, 5.0} corresponds to 0.2sin(5.0t) in the Fourier series, for example.
     // if we create a signal with all frequencies from zero to nyquist, we should get an impulsive signal
-    vector<SignalComponent> components{{1.0, 500e+03}, {0.5, 1e+06}, {0.25, 2e+06}};
+    vector<SignalComponent> components;
+    for (double freq = 100e3; freq < NYQUIST; freq += 10e3)
+    {
+        SignalComponent newComponent{1.0, freq};
+        components.push_back(newComponent);
+    }
     // find minimum and maximum components
     double minFreq = components[0].freq;
     double maxFreq = components[0].freq;
@@ -40,7 +45,7 @@ int main()
     }
     assert(maxFreq < NYQUIST);
 
-    double SIGNAL_DURATION = 2.0 / minFreq; // should be on the order of the period of the lowest freq component in our signal
+    double SIGNAL_DURATION = 1.0 / minFreq; // should be on the order of the period of the lowest freq component in our signal
 
     // *** SAMPLING CONTROL ***
     vector<double> t_Samples;
@@ -51,7 +56,8 @@ int main()
 
     // *** FREQUENCY (k) DISCRETIZATION ***
     vector<int> k_vals;
-    for (int i = -N / 2; i < N / 2; i++) k_vals.push_back(i);
+    for (int i = -N / 2; i < (N / 2) + 1; i++) k_vals.push_back(i);
+
 
     // *** DFT ***
     auto startDFT = high_resolution_clock::now();
@@ -64,25 +70,46 @@ int main()
     auto DFT_duration = duration_cast<microseconds>(stopDFT - startDFT);
     cout << "DFT Duration: " << DFT_duration.count() << " microseconds.\n";
 
-    // *** GOERTZEL ALGORITHM, ALL K VALUES OF DFT ***
-    auto startGA = high_resolution_clock::now();
+
+    // *** GOERTZEL ALGORITHM FIRST ORDER, ALL K VALUES OF DFT ***
+    auto startGA1 = high_resolution_clock::now();
 
     // *********************************************** BEGIN
-    vector<dcomp> transformedSignal;
+    vector<dcomp> transformedSignal1;
     for (int k : k_vals)
     {
         vector<dcomp> y_k = goertzelFilter_1(x, k);
         // X(k) is the Nth value in the filtered signal (last value)
         dcomp X = y_k.back();
-        transformedSignal.push_back(X);
+        transformedSignal1.push_back(X);
     }
     // *********************************************** END
 
-    auto stopGA = high_resolution_clock::now();
-    auto GA_duration = duration_cast<microseconds>(stopGA - startGA);
-    cout << "Goertzel Algorithm Duration, All Frequencies: " << GA_duration.count() << " microseconds.\n";
+    auto stopGA1 = high_resolution_clock::now();
+    auto GA1_duration = duration_cast<microseconds>(stopGA1 - startGA1);
+    cout << "Goertzel Algorithm, First Order Duration, All Frequencies: " << GA1_duration.count() << " microseconds.\n";
 
-    // *** GOERTZEL ALGORITHM, ONLY THREE K VALUES OF DFT ***
+
+    // *** GOERTZEL ALGORITHM SECOND ORDER, ALL K VALUES OF DFT ***
+    auto startGA2 = high_resolution_clock::now();
+
+    // *********************************************** BEGIN
+    vector<dcomp> transformedSignal2;
+    for (int k : k_vals)
+    {
+        vector<dcomp> y_k = goertzelFilter_2(x, k);
+        // X(k) is the Nth value in the filtered signal (last value)
+        dcomp X = y_k.back();
+        transformedSignal2.push_back(X);
+    }
+    // *********************************************** END
+
+    auto stopGA2 = high_resolution_clock::now();
+    auto GA2_duration = duration_cast<microseconds>(stopGA2 - startGA2);
+    cout << "Goertzel Algorithm, Second Order Duration, All Frequencies: " << GA2_duration.count() << " microseconds.\n";
+
+
+    // *** GOERTZEL ALGORITHM FIRST ORDER, ONLY THREE K VALUES OF DFT ***
     
     auto startGA_short = high_resolution_clock::now();
 
@@ -96,6 +123,7 @@ int main()
     auto GA_duration_short = duration_cast<microseconds>(stopGA_short - startGA_short);
     cout << "Goertzel Algorithm Duration, 3 Frequencies: " << GA_duration_short.count() << " microseconds.\n";
 
+
     // *** FILTERED SIGNAL ***
     vector<double> y0;
     if (FIR) y0 = LOWPASS_FIR(x, alpha);
@@ -103,7 +131,7 @@ int main()
 
     // *** IMPULSE RESPONSE ***
     // impulse signal duration = 100
-    vector<double> impulse(100, 0);
+    vector<double> impulse(1000, 0);
     impulse[0] = 1;
     vector<double> h; 
     if (FIR)
@@ -122,7 +150,7 @@ int main()
     for (int i = 0; i < x.size(); i++) fout << t_Samples[i] << ' ' << x[i] << endl;
     fout.close();
     fout.open("data/input_DFT.dat");
-    for (int i = 0; i < transformedSignal.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << abs(transformedSignal[i]) << endl;
+    for (int i = 0; i < transformedSignal0.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << abs(transformedSignal0[i]) << endl;
     fout.close();
     fout.open("data/output.dat");
     for (int i = 0; i < y0.size(); i++) fout << t_Samples[i] << ' ' << y0[i] << endl;
@@ -131,28 +159,28 @@ int main()
     for (int i = 0; i < h.size(); i++) fout << i << ' ' << h[i] << endl;
     fout.close();
     fout.open("data/freq_response.dat");
-    for (int i = 0; i < k_vals.size(); i++) fout << k_vals[i]/(double(N)*NYQUIST) << ' ' << abs(Freq_Response[i]) << endl;
+    for (int i = 0; i < k_vals.size(); i++) fout << k_vals[i]/double(N) << ' ' << abs(Freq_Response[i]) << endl;
     fout.close();
 
     // *** PLOT WITH GNUPLOT, SYSTEM() SHOULD RETURN 0 ***
     int EXIT;
 
-    EXIT = system("gnuplot --persist \"input.plt\"");
+    EXIT = system("gnuplot --persist \"plt/input.plt\"");
     if (EXIT) cerr << "Failed to plot input.\n";
 
-    EXIT = system("gnuplot --persist \"output.plt\"");
+    EXIT = system("gnuplot --persist \"plt/output.plt\"");
     if (EXIT) cerr << "Failed to plot output.\n";
 
-    EXIT = system("gnuplot --persist \"input_DFT.plt\"");
+    EXIT = system("gnuplot --persist \"plt/input_DFT.plt\"");
     if (EXIT) cerr << "Failed to plot input signal DFT.\n";
 
-    EXIT = system("gnuplot --persist \"moving_avg.plt\"");
+    EXIT = system("gnuplot --persist \"plt/moving_avg.plt\"");
     if (EXIT) cerr << "Failed to plot input/output comparison.\n";
 
-    EXIT = system("gnuplot --persist \"IR.plt\"");
+    EXIT = system("gnuplot --persist \"plt/IR.plt\"");
     if (EXIT) cerr << "Failed to plot impulse response.\n";
 
-    EXIT = system("gnuplot --persist \"freq_response.plt\"");
+    EXIT = system("gnuplot --persist \"plt/freq_response.plt\"");
     if (EXIT) cerr << "Failed to plot frequency response.\n";
 
     return EXIT_SUCCESS;

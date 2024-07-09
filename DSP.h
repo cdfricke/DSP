@@ -94,4 +94,11 @@ vector<dcomp> DFT(const vector<double>& x, const vector<int>& k_range);
 // y_k[n] = exp(i * 2 * PI * k / N)*y[n-1]
 vector<complex<double>> goertzelFilter_1(const vector<double>& input, const int k);
 
+// goertzelFilter_2(const vector<double>&, const int):
+// Performs the 2nd - order recursive implementation of a Goertzel Filter for a single integer k-value
+// of n input signal to calculate X(k) = y[N] where y is the output signal of the filter, and N is the
+// final element in the digital signal.
+// y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
+vector<dcomp> goertzelFilter_2(const vector<double> &input, const int k);
+
 #endif

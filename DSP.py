@@ -9,7 +9,7 @@ from math import cos, pi
 import numpy as np
 
 # global constants
-CMOD_CLK_FREQ = 12e6 # Hz
+CMOD_CLK_FREQ = 100e6 # Hz
 FRAC_BITS = 13    # number of fractional bits used to represent the input phase to CORDIC
 TWO_PI = round(2 * pi * (2**FRAC_BITS))       # two's complement representation of 2pi for phase input
 
@@ -85,6 +85,8 @@ def getFreqOut(PHASE_INC: int, SAMPLE_RATE: float) -> float:
     @@ return:
         float: the sample rate divided by the number of samples in a cycle of the output signal
     """
+    if (PHASE_INC == 0): 
+        return 0
     return SAMPLE_RATE / (samplesPerPeriod(PHASE_INC))
 
 def freqQuantization(SAMPLE_RATE: float) -> np.array:
@@ -113,17 +115,20 @@ if __name__ == "__main__":
     possibleFreqs = freqQuantization(SAMPLE_RATE=CMOD_CLK_FREQ)
 
     # ** PLOT POSSIBLE FREQUENCIES AGAINST THEIR PHASE INCREMENTS **
-    phase_increments = [tuple[0] for tuple in possibleFreqs]
-    frequencies = [tuple[1] for tuple in possibleFreqs]
+    # phase_increments = [tuple[0] for tuple in possibleFreqs]
+    # frequencies = [tuple[1] for tuple in possibleFreqs]
     
-    fig, ax = plt.subplots()
-    ax.set_title("Quantization of Frequencies from CORDIC IP")
-    ax.set_ylabel("Frequency")
-    ax.set_xlabel("Phase Increment")
-    ax.plot(phase_increments, frequencies, 'k.')
-    plt.show()
+    # fig, ax = plt.subplots()
+    # ax.set_title("Quantization of Frequencies from CORDIC IP")
+    # ax.set_ylabel("Frequency")
+    # ax.set_xlabel("Phase Increment")
+    # ax.plot(phase_increments, frequencies, 'k.')
+    # plt.show()
 
     # ** PROMPT USER FOR A DESIRED FREQUENCY **
+    print("(PHASE INC)     (FREQ)")
+    for pair in possibleFreqs:
+        print("%11d %10d" % (pair[0], pair[1]))
     userFreq = input("Enter the desired frequency output of the wave generator (Hz): ")
     requiredPhaseInc = getPhaseInc(possibleFreqs, desiredFreq=float(userFreq))
     print(f"For this frequency, (or the closest option), your phase increment should be {requiredPhaseInc}")
