@@ -20,7 +20,7 @@ int main()
     // parameters
     bool    FIR = false;                            // decides which filter is applied. Both have two taps chosen by alpha
     double  alpha = 0.125;                          // filter coeffs are {a, 1-a}
-    double  SAMPLING_RATE = 12.0e+06;               // 12 MHz CMOD clock frequency
+    double  SAMPLING_RATE = 100.0e+06;              // 100 MHz Arty A7 clock frequency
     double  SAMPLING_PERIOD = 1.0 / SAMPLING_RATE;
     double  NYQUIST = SAMPLING_RATE / 2.0;
 
@@ -29,12 +29,14 @@ int main()
     // and a vector of discrete t values which tells us where the samples of the signal are.
     // The SignalComponent initialized as {0.1, 5.0} corresponds to 0.2sin(5.0t) in the Fourier series, for example.
     // if we create a signal with all frequencies from zero to nyquist, we should get an impulsive signal
-    vector<SignalComponent> components;
+    vector<SignalComponent> components = {{1.0, 5e6}};
+    /*
     for (double freq = 100e3; freq < NYQUIST; freq += 10e3)
     {
         SignalComponent newComponent{1.0, freq};
         components.push_back(newComponent);
     }
+    */
     // find minimum and maximum components
     double minFreq = components[0].freq;
     double maxFreq = components[0].freq;
@@ -45,12 +47,16 @@ int main()
     }
     assert(maxFreq < NYQUIST);
 
-    double SIGNAL_DURATION = 1.0 / minFreq; // should be on the order of the period of the lowest freq component in our signal
+    int N = 256;
 
     // *** SAMPLING CONTROL ***
     vector<double> t_Samples;
-    for (double i = 0.0; i < SIGNAL_DURATION; i += SAMPLING_PERIOD) t_Samples.push_back(i);
-    int N = t_Samples.size();
+    double t = 0.0;
+    while (t_Samples.size() < N)
+    {
+        t_Samples.push_back(t);
+        t += SAMPLING_PERIOD;
+    }
     // once we have the signal components and sampling control set, we can call generateSignal()
     vector<double> x = generateSignal(t_Samples, components);
 
@@ -144,13 +150,27 @@ int main()
     I = sqrt(I);
     vector<dcomp> Freq_Response = DFT(h, k_vals);
 
+    // ** PRINT INFO **
+    cout << "PARAMETERS:" << endl
+         << "sampling rate: " << SAMPLING_RATE << endl
+         << "nyquist: " << NYQUIST << endl
+         << "signal components: " << endl;
+    for (SignalComponent c : components)
+        cout << "\t" << c.freq << endl;
+    cout << "N: " << N << endl
+         << "Goertzel Results: (freq, k, power)" << endl;
+    for (int i = 0; i < transformedSignal1.size(); i++)
+    {
+        cout << k_vals[i] / double(N) * SAMPLING_RATE << ", " << k_vals[i] << ", " << abs(transformedSignal1[i]) << endl;
+    }
+
     // *** SAVE DATA ***
     ofstream fout;
     fout.open("data/input.dat");
     for (int i = 0; i < x.size(); i++) fout << t_Samples[i] << ' ' << x[i] << endl;
     fout.close();
     fout.open("data/input_DFT.dat");
-    for (int i = 0; i < transformedSignal0.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << abs(transformedSignal0[i]) << endl;
+    for (int i = 0; i < transformedSignal1.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << abs(transformedSignal1[i]) << endl;
     fout.close();
     fout.open("data/output.dat");
     for (int i = 0; i < y0.size(); i++) fout << t_Samples[i] << ' ' << y0[i] << endl;
