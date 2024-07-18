@@ -31,7 +31,7 @@ int main()
     // if we create a signal with all frequencies from zero to nyquist, we should get an impulsive signal
     vector<SignalComponent> components = {{1.0, 5e6}};
     /*
-    for (double freq = 100e3; freq < NYQUIST; freq += 10e3)
+    for (double freq = 1e6; freq < NYQUIST; freq += 100e3)
     {
         SignalComponent newComponent{1.0, freq};
         components.push_back(newComponent);
