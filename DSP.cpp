@@ -132,36 +132,34 @@ vector<dcomp> goertzelFilter_1(const vector<double>& input, const int k)
     return output;
 }
 
-vector<dcomp> goertzelFilter_2(const vector<double> &input, const int k)
+dpair goertzelFilter_2(const vector<double> &input, const int k)
 {
-    vector<dcomp> output;
-    dcomp I = -1;
-    I = sqrt(I);
     int N = input.size();
 
     // delay registers
-    dcomp d_reg_out0 = 0;
-    dcomp d_reg_out1 = 0;
-    dcomp d_reg_in0 = 0;
+    double dro0 = 0;
+    double dro1 = 0;
+    double dri = 0;
 
     // compute constant coefficients
     const double phase = 2.0 * PI * double(k) / double(N);
-    const dcomp W_Nk = exp(-I * phase);
-    const double cosCoeff = 2*cos(phase);
+    const double COS = cos(phase);
+    const double SIN = sin(phase);
+    double out_Re, out_Im;
 
-    // type conversion
-    dcomp c_in;
+    int n = 0;
     for (double in : input)
     {
-        c_in = complex(in, 0.0);
         // DIFFERENCE EQUATION:
-        // y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
-        dcomp out = (c_in) - (W_Nk * d_reg_in0) + (cosCoeff * d_reg_out0) - (d_reg_out1);
+        // Re{y[n]} = x[n] - cos(2PIk/N)*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
+        // Im{y[n]} = sin(2PIk/N)*x[n-1]
+        out_Re = in - (COS*dri) + (2*COS*dro0) - dro1;
         
-        d_reg_out1 = d_reg_out0; // y[n-1] -> y[n-2]
-        d_reg_out0 = out;        // y[n] -> y[n-1]
-        d_reg_in0 = in;          // x[n] -> x[n-1]
-        output.push_back(out);
+        dro1 = dro0; // y[n-1] -> y[n-2]
+        dro0 = out_Re;        // y[n] -> y[n-1]
+        dri = in;          // x[n] -> x[n-1]
     }
-    return output;
+    out_Im = SIN * dri;
+
+    return dpair{out_Re, out_Im};
 }

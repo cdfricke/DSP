@@ -11,6 +11,8 @@ Synopsis: Header File for DSP function library
 #include <random>
 #include <complex>
 #include <vector>
+#include <cmath>
+#include <utility>
 using namespace std;
 
 struct SignalComponent
@@ -20,6 +22,9 @@ struct SignalComponent
 };
 
 typedef complex<double> dcomp;
+typedef std::pair<double,double> dpair;
+
+#define pabs(pair) sqrt(((pair.first)*(pair.first))+((pair.second)*(pair.second)))
 
 // getRandomFloat(const double, const double):
 // Simply returns a single random number generated with the Mersenne Twister (mt19937)
@@ -99,6 +104,6 @@ vector<complex<double>> goertzelFilter_1(const vector<double>& input, const int 
 // of n input signal to calculate X(k) = y[N] where y is the output signal of the filter, and N is the
 // final element in the digital signal.
 // y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
-vector<dcomp> goertzelFilter_2(const vector<double> &input, const int k);
+dpair goertzelFilter_2(const vector<double> &input, const int k);
 
 #endif

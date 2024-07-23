@@ -68,47 +68,47 @@ int main()
     // *** DFT ***
     auto startDFT = high_resolution_clock::now();
 
-    // *********** BEGIN
-    vector<dcomp> transformedSignal0 = DFT(x, k_vals);
-    // *********** END
+        // *********** BEGIN
+        vector<dcomp> transformedSignal0 = DFT(x, k_vals);
+        // *********** END
 
     auto stopDFT = high_resolution_clock::now();    
     auto DFT_duration = duration_cast<microseconds>(stopDFT - startDFT);
     cout << "DFT Duration: " << DFT_duration.count() << " microseconds.\n";
 
-
     // *** GOERTZEL ALGORITHM FIRST ORDER, ALL K VALUES OF DFT ***
     auto startGA1 = high_resolution_clock::now();
 
-    // *********************************************** BEGIN
-    vector<dcomp> transformedSignal1;
-    for (int k : k_vals)
-    {
-        vector<dcomp> y_k = goertzelFilter_1(x, k);
-        // X(k) is the Nth value in the filtered signal (last value)
-        dcomp X = y_k.back();
-        transformedSignal1.push_back(X);
-    }
-    // *********************************************** END
+        // *********************************************** BEGIN
+        vector<dcomp> transformedSignal1;
+        for (int k : k_vals)
+        {
+            vector<dcomp> y_k = goertzelFilter_1(x, k);
+            // X(k) is the Nth value in the filtered signal (last value)
+            dcomp X = y_k.back();
+            transformedSignal1.push_back(X);
+        }
+        // *********************************************** END
 
     auto stopGA1 = high_resolution_clock::now();
     auto GA1_duration = duration_cast<microseconds>(stopGA1 - startGA1);
     cout << "Goertzel Algorithm, First Order Duration, All Frequencies: " << GA1_duration.count() << " microseconds.\n";
 
-
     // *** GOERTZEL ALGORITHM SECOND ORDER, ALL K VALUES OF DFT ***
+    ofstream probe0, probe1;
+    probe0.open("data/goertzel_k13.dat");
+    probe0 << "# Sample Number, Real, and Imaginary parts of 2nd Order Goertzel Algorithm filter response\n";
+
     auto startGA2 = high_resolution_clock::now();
 
-    // *********************************************** BEGIN
-    vector<dcomp> transformedSignal2;
-    for (int k : k_vals)
-    {
-        vector<dcomp> y_k = goertzelFilter_2(x, k);
-        // X(k) is the Nth value in the filtered signal (last value)
-        dcomp X = y_k.back();
-        transformedSignal2.push_back(X);
-    }
-    // *********************************************** END
+        // *********************************************** BEGIN
+        vector<double> transformedSignal2;
+        for (int k : k_vals)
+        {
+            dpair y_k = goertzelFilter_2(x, k);
+            transformedSignal2.push_back(pabs(y_k));
+        }
+        // *********************************************** END
 
     auto stopGA2 = high_resolution_clock::now();
     auto GA2_duration = duration_cast<microseconds>(stopGA2 - startGA2);
@@ -119,11 +119,11 @@ int main()
     
     auto startGA_short = high_resolution_clock::now();
 
-    // ****************************************************** BEGIN
-    vector<dcomp> y_5 = goertzelFilter_1(x, 5);
-    vector<dcomp> y_6 = goertzelFilter_1(x, 6);
-    vector<dcomp> y_7 = goertzelFilter_1(x, 7);
-    // ****************************************************** END
+        // ****************************************************** BEGIN
+        vector<dcomp> y_5 = goertzelFilter_1(x, 5);
+        vector<dcomp> y_6 = goertzelFilter_1(x, 6);
+        vector<dcomp> y_7 = goertzelFilter_1(x, 7);
+        // ****************************************************** END
 
     auto stopGA_short = high_resolution_clock::now();
     auto GA_duration_short = duration_cast<microseconds>(stopGA_short - startGA_short);
@@ -159,9 +159,9 @@ int main()
         cout << "\t" << c.freq << endl;
     cout << "N: " << N << endl
          << "Goertzel Results: (freq, k, power)" << endl;
-    for (int i = 0; i < transformedSignal1.size(); i++)
+    for (int i = 0; i < transformedSignal2.size(); i++)
     {
-        cout << k_vals[i] / double(N) * SAMPLING_RATE << ", " << k_vals[i] << ", " << abs(transformedSignal1[i]) << endl;
+        cout << k_vals[i] / double(N) * SAMPLING_RATE << ", " << k_vals[i] << ", " << transformedSignal2[i] << endl;
     }
 
     // *** SAVE DATA ***
@@ -170,7 +170,7 @@ int main()
     for (int i = 0; i < x.size(); i++) fout << t_Samples[i] << ' ' << x[i] << endl;
     fout.close();
     fout.open("data/input_DFT.dat");
-    for (int i = 0; i < transformedSignal1.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << abs(transformedSignal1[i]) << endl;
+    for (int i = 0; i < transformedSignal2.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << transformedSignal2[i] << endl;
     fout.close();
     fout.open("data/output.dat");
     for (int i = 0; i < y0.size(); i++) fout << t_Samples[i] << ' ' << y0[i] << endl;

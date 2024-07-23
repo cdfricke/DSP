@@ -9,7 +9,7 @@ from math import cos, pi
 import numpy as np
 
 # global constants
-CMOD_CLK_FREQ = 100e6 # Hz
+CLK_FREQ = 100e6 # Hz
 FRAC_BITS = 13    # number of fractional bits used to represent the input phase to CORDIC
 TWO_PI = round(2 * pi * (2**FRAC_BITS))       # two's complement representation of 2pi for phase input
 
@@ -112,7 +112,7 @@ def freqQuantization(SAMPLE_RATE: float) -> np.array:
 # in order to produce a signal of that frequency.
 if __name__ == "__main__":
 
-    possibleFreqs = freqQuantization(SAMPLE_RATE=CMOD_CLK_FREQ)
+    possibleFreqs = freqQuantization(SAMPLE_RATE=CLK_FREQ)
 
     # ** PLOT POSSIBLE FREQUENCIES AGAINST THEIR PHASE INCREMENTS **
     # phase_increments = [tuple[0] for tuple in possibleFreqs]
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     userFreq = input("Enter the desired frequency output of the wave generator (Hz): ")
     requiredPhaseInc = getPhaseInc(possibleFreqs, desiredFreq=float(userFreq))
     print(f"For this frequency, (or the closest option), your phase increment should be {requiredPhaseInc}")
-    actualFreq = getFreqOut(PHASE_INC=requiredPhaseInc, SAMPLE_RATE=CMOD_CLK_FREQ)
+    actualFreq = getFreqOut(PHASE_INC=requiredPhaseInc, SAMPLE_RATE=CLK_FREQ)
     print(f"The resulting frequency is {round(actualFreq, 2)} Hz.")
 
 
