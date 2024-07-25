@@ -136,30 +136,40 @@ dpair goertzelFilter_2(const vector<double> &input, const int k)
 {
     int N = input.size();
 
-    // delay registers
-    double dro0 = 0;
-    double dro1 = 0;
-    double dri = 0;
+    // IIR delay registers for re and im calculations
+    double dro0_re = 0;     // Re{y[n-1]}
+    double dro1_re = 0;     // Re{y[n-2]}
+
+    double dro0_im = 0;     // Im{y[n-1]}
+    double dro1_im = 0;     // Im{y[n-2]}
+
+    // FIR delay register
+    double dri = 0;         // x[n-1]
 
     // compute constant coefficients
     const double phase = 2.0 * PI * double(k) / double(N);
     const double COS = cos(phase);
     const double SIN = sin(phase);
-    double out_Re, out_Im;
+    double out_Re=0, out_Im=0;
 
     int n = 0;
     for (double in : input)
     {
         // DIFFERENCE EQUATION:
-        // Re{y[n]} = x[n] - cos(2PIk/N)*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
-        // Im{y[n]} = sin(2PIk/N)*x[n-1]
-        out_Re = in - (COS*dri) + (2*COS*dro0) - dro1;
+        // Re{y[n]} = x[n] - cos(2PIk/N)*x[n-1] + 2cos(2PIk/N)*Re{y[n-1]} - Re{y[n-2]}
+        // Im{y[n]} = sin(2PIk/N)*x[n-1] + 2cos(2PIk/N)*Im{y[n-1]} - Im{y[n-2]}
+        out_Re = ( in ) - ( COS*dri ) + ( 2*COS*dro0_re ) - ( dro1_re );
+        out_Im = ( SIN * dri ) + ( 2*COS*dro0_im ) - ( dro1_im );
+
+        // update delay regs
+        dri = in;           // x[n] -> x[n-1]
+
+        dro1_re = dro0_re;  // Re{y[n-1]} -> Re{y[n-2]}
+        dro0_re = out_Re;   // Re{y[n]} -> Re{y[n-1]}
         
-        dro1 = dro0; // y[n-1] -> y[n-2]
-        dro0 = out_Re;        // y[n] -> y[n-1]
-        dri = in;          // x[n] -> x[n-1]
+        dro1_im = dro0_im;  // Im{y[n-1]} -> Im{y[n-2]}
+        dro0_im = out_Im;   // Im{y[n]} -> Im{y[n-1]}
     }
-    out_Im = SIN * dri;
 
     return dpair{out_Re, out_Im};
 }

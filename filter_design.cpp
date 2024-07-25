@@ -29,7 +29,7 @@ int main()
     // and a vector of discrete t values which tells us where the samples of the signal are.
     // The SignalComponent initialized as {0.1, 5.0} corresponds to 0.2sin(5.0t) in the Fourier series, for example.
     // if we create a signal with all frequencies from zero to nyquist, we should get an impulsive signal
-    vector<SignalComponent> components = {{1.0, 5e6}};
+    vector<SignalComponent> components = {{1.0, (100.0e6 / 6.0)}};
     /*
     for (double freq = 1e6; freq < NYQUIST; freq += 100e3)
     {
@@ -47,7 +47,7 @@ int main()
     }
     assert(maxFreq < NYQUIST);
 
-    int N = 256;
+    int N = 600;
 
     // *** SAMPLING CONTROL ***
     vector<double> t_Samples;
@@ -95,18 +95,15 @@ int main()
     cout << "Goertzel Algorithm, First Order Duration, All Frequencies: " << GA1_duration.count() << " microseconds.\n";
 
     // *** GOERTZEL ALGORITHM SECOND ORDER, ALL K VALUES OF DFT ***
-    ofstream probe0, probe1;
-    probe0.open("data/goertzel_k13.dat");
-    probe0 << "# Sample Number, Real, and Imaginary parts of 2nd Order Goertzel Algorithm filter response\n";
 
     auto startGA2 = high_resolution_clock::now();
 
         // *********************************************** BEGIN
-        vector<double> transformedSignal2;
+        vector<dpair> transformedSignal2;
         for (int k : k_vals)
         {
             dpair y_k = goertzelFilter_2(x, k);
-            transformedSignal2.push_back(pabs(y_k));
+            transformedSignal2.push_back(y_k);
         }
         // *********************************************** END
 
@@ -150,6 +147,17 @@ int main()
     I = sqrt(I);
     vector<dcomp> Freq_Response = DFT(h, k_vals);
 
+    // ** CALCULATE PEAK FREQUENCY **
+    double currentMax = 0.0;
+    int maxK = 0;
+    for (int i = 0; i < transformedSignal2.size(); i++)
+    {
+        if (pabs(transformedSignal2[i]) > currentMax) { 
+            currentMax = pabs(transformedSignal2[i]);
+            maxK = k_vals[i];
+        }
+    }
+
     // ** PRINT INFO **
     cout << "PARAMETERS:" << endl
          << "sampling rate: " << SAMPLING_RATE << endl
@@ -157,12 +165,8 @@ int main()
          << "signal components: " << endl;
     for (SignalComponent c : components)
         cout << "\t" << c.freq << endl;
-    cout << "N: " << N << endl
-         << "Goertzel Results: (freq, k, power)" << endl;
-    for (int i = 0; i < transformedSignal2.size(); i++)
-    {
-        cout << k_vals[i] / double(N) * SAMPLING_RATE << ", " << k_vals[i] << ", " << transformedSignal2[i] << endl;
-    }
+    cout << "N: " << N << endl;
+    cout << "Peak Freq: k = " << abs(maxK) << ", freq = " << (abs(maxK) * SAMPLING_RATE) / double(N) << endl;
 
     // *** SAVE DATA ***
     ofstream fout;
@@ -170,7 +174,7 @@ int main()
     for (int i = 0; i < x.size(); i++) fout << t_Samples[i] << ' ' << x[i] << endl;
     fout.close();
     fout.open("data/input_DFT.dat");
-    for (int i = 0; i < transformedSignal2.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << transformedSignal2[i] << endl;
+    for (int i = 0; i < transformedSignal2.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << pabs(transformedSignal2[i]) << endl;
     fout.close();
     fout.open("data/output.dat");
     for (int i = 0; i < y0.size(); i++) fout << t_Samples[i] << ' ' << y0[i] << endl;
