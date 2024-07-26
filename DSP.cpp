@@ -173,3 +173,31 @@ dpair goertzelFilter_2(const vector<double> &input, const int k)
 
     return dpair{out_Re, out_Im};
 }
+
+dcomp goertzel_IIR_FIR(const vector<double>& x, const int k)
+{
+    vector<double> s;
+    int N = x.size();
+    double COS = cos(2*PI*double(k)/double(N));
+    double SIN = sin(2*PI*double(k)/double(N));
+    
+    double drs0 = 0;   // s[n]
+    double drs1 = 0;    // s[n-1]
+    double drs2 = 0;    // s[n-2]
+
+    // run IIR filter up through x[N-1] term
+    for (int n = 0; n < N; n++) {
+        drs0 = x[n] + (2*COS*drs1) - drs2;
+        s.push_back(drs0);  // s[n] = drs0
+        drs2 = drs1;
+        drs1 = drs0;
+    }
+
+    // s[N] = 2cos()s[N-1] - s[N-2] assuming x[N] = 0
+    double s_N = 2*COS*s[N-1] - s[N-2];
+
+    // y[N] = s[N] - cos()s[N-1] + isin()s[N-1]
+    double real = s_N - (COS*s[N-1]);
+    double imag = SIN*s[N-1];
+    return dcomp(real, imag);
+}

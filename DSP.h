@@ -92,18 +92,30 @@ vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha);
 //  - vector<complex<double>>& output: resulting transformed signal. each value is a complex number with real and imaginary components.
 vector<dcomp> DFT(const vector<double>& x, const vector<int>& k_range);
 
-
-// goertzelFilter_1(const vector<double>&, const int):
-// Performs the 1st - order recursive implementation of a Goertzel Filter for a single integer k-value 
-// of an input signal to calculate X(k) = y[N] where y is the output signal of the filter.
-// y_k[n] = exp(i * 2 * PI * k / N)*y[n-1]
+/*
+goertzelFilter_1(const vector<double>&, const int):
+Performs the 1st - order recursive implementation of a Goertzel Filter for a single integer k-value 
+of an input signal to calculate X(k) = y[N] where y is the output signal of the filter.
+y_k[n] = exp(i * 2 * PI * k / N)*y[n-1]
+*/
 vector<complex<double>> goertzelFilter_1(const vector<double>& input, const int k);
 
-// goertzelFilter_2(const vector<double>&, const int):
-// Performs the 2nd - order recursive implementation of a Goertzel Filter for a single integer k-value
-// of n input signal to calculate X(k) = y[N] where y is the output signal of the filter, and N is the
-// final element in the digital signal.
-// y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
+/*
+goertzelFilter_2(const vector<double>&, const int):
+    Performs the 2nd - order recursive implementation of a Goertzel Filter for a single integer k-value
+    of n input signal to calculate X(k) = y[N] where y is the output signal of the filter, and N is the
+    final element in the digital signal.
+    y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
+*/
 dpair goertzelFilter_2(const vector<double> &input, const int k);
+
+
+/* 
+goertzel_IIR(const vector<double>&, const int):
+    Implements strictly the IIR portion of the Goertzel algorithm. Takes in an input sequence x[n] and 
+    returns an intermediate output sequence s[n] to then be passed to the FIR portion of the cascade
+    DIFF EQ: s[n] = x[n] + 2cos()s[n-1] - s[n-2]
+*/
+dcomp goertzel_IIR_FIR(const vector<double> &input, const int k);
 
 #endif

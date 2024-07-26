@@ -47,7 +47,7 @@ int main()
     }
     assert(maxFreq < NYQUIST);
 
-    int N = 600;
+    int N = 60;
 
     // *** SAMPLING CONTROL ***
     vector<double> t_Samples;
