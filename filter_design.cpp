@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>  
-#include <cstdlib>  // for system()
-#include <cassert>
-#include <chrono>   // for timing with high res clock
-#include "DSP.h"
+#include <cstdlib>      // for system()
+#include <cassert>      // for assert()
+#include <chrono>       // for timing with high res clock
+#include "inc/DSP.h"    // my personal DSP library for this project
 
 using namespace std;
 using chrono::duration_cast, chrono::microseconds, chrono::high_resolution_clock;
@@ -47,7 +47,7 @@ int main()
     }
     assert(maxFreq < NYQUIST);
 
-    int N = 60;
+    int N = 126;
 
     // *** SAMPLING CONTROL ***
     vector<double> t_Samples;
@@ -83,9 +83,8 @@ int main()
         vector<dcomp> transformedSignal1;
         for (int k : k_vals)
         {
-            vector<dcomp> y_k = goertzelFilter_1(x, k);
+            dcomp X = goertzel_1(x, k);
             // X(k) is the Nth value in the filtered signal (last value)
-            dcomp X = y_k.back();
             transformedSignal1.push_back(X);
         }
         // *********************************************** END
@@ -99,10 +98,10 @@ int main()
     auto startGA2 = high_resolution_clock::now();
 
         // *********************************************** BEGIN
-        vector<dpair> transformedSignal2;
+        vector<dcomp> transformedSignal2;
         for (int k : k_vals)
         {
-            dpair y_k = goertzelFilter_2(x, k);
+            dcomp y_k = goertzel_IIR(x, k);
             transformedSignal2.push_back(y_k);
         }
         // *********************************************** END
@@ -117,9 +116,9 @@ int main()
     auto startGA_short = high_resolution_clock::now();
 
         // ****************************************************** BEGIN
-        vector<dcomp> y_5 = goertzelFilter_1(x, 5);
-        vector<dcomp> y_6 = goertzelFilter_1(x, 6);
-        vector<dcomp> y_7 = goertzelFilter_1(x, 7);
+        dcomp y_5 = goertzel_1(x, 5);
+        dcomp y_6 = goertzel_1(x, 6);
+        dcomp y_7 = goertzel_1(x, 7);
         // ****************************************************** END
 
     auto stopGA_short = high_resolution_clock::now();
@@ -134,7 +133,7 @@ int main()
 
     // *** IMPULSE RESPONSE ***
     // impulse signal duration = 100
-    vector<double> impulse(1000, 0);
+    vector<double> impulse(N, 0);
     impulse[0] = 1;
     vector<double> h; 
     if (FIR)
@@ -152,8 +151,8 @@ int main()
     int maxK = 0;
     for (int i = 0; i < transformedSignal2.size(); i++)
     {
-        if (pabs(transformedSignal2[i]) > currentMax) { 
-            currentMax = pabs(transformedSignal2[i]);
+        if (abs(transformedSignal2[i]) > currentMax) { 
+            currentMax = abs(transformedSignal2[i]);
             maxK = k_vals[i];
         }
     }
@@ -174,7 +173,7 @@ int main()
     for (int i = 0; i < x.size(); i++) fout << t_Samples[i] << ' ' << x[i] << endl;
     fout.close();
     fout.open("data/input_DFT.dat");
-    for (int i = 0; i < transformedSignal2.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << pabs(transformedSignal2[i]) << endl;
+    for (int i = 0; i < transformedSignal2.size(); i++) fout << k_vals[i]/double(N) * SAMPLING_RATE << ' ' << abs(transformedSignal2[i]) << endl;
     fout.close();
     fout.open("data/output.dat");
     for (int i = 0; i < y0.size(); i++) fout << t_Samples[i] << ' ' << y0[i] << endl;
@@ -192,13 +191,10 @@ int main()
     EXIT = system("gnuplot --persist \"plt/input.plt\"");
     if (EXIT) cerr << "Failed to plot input.\n";
 
-    EXIT = system("gnuplot --persist \"plt/output.plt\"");
-    if (EXIT) cerr << "Failed to plot output.\n";
-
     EXIT = system("gnuplot --persist \"plt/input_DFT.plt\"");
     if (EXIT) cerr << "Failed to plot input signal DFT.\n";
 
-    EXIT = system("gnuplot --persist \"plt/moving_avg.plt\"");
+    EXIT = system("gnuplot --persist \"plt/comparison.plt\"");
     if (EXIT) cerr << "Failed to plot input/output comparison.\n";
 
     EXIT = system("gnuplot --persist \"plt/IR.plt\"");

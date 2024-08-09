@@ -53,11 +53,11 @@ vector<double> generateSignal(const vector<double> t_Samples);
 //  - const vector<double>& x_values: discretization vector, i.e. calculate the signal value at these x_values
 //  - const vector<SignalComponent>& components: sine wave signal components, with their frequency and coefficient stored in a struct
 // @@ return:
-// 
+//  - vector<double> signal: output of function, a signal generated based on signal components
 vector<double> generateSignal(const vector<double> &x_values, const vector<SignalComponent> &components);
 
 
-// LOWPASS_FIR(const vectro<double>&, vector<double>&, const double):
+// LOWPASS_FIR(const vector<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an FIR Filter
 // to the input vector characterized by the difference equation:
 //   y[n] = a*x[n] + (1-a)*x[n-1]
@@ -98,7 +98,7 @@ Performs the 1st - order recursive implementation of a Goertzel Filter for a sin
 of an input signal to calculate X(k) = y[N] where y is the output signal of the filter.
 y_k[n] = exp(i * 2 * PI * k / N)*y[n-1]
 */
-vector<complex<double>> goertzelFilter_1(const vector<double>& input, const int k);
+dcomp goertzel_1(const vector<double>& input, const int k);
 
 /*
 goertzelFilter_2(const vector<double>&, const int):
@@ -107,8 +107,7 @@ goertzelFilter_2(const vector<double>&, const int):
     final element in the digital signal.
     y[n] = x[n] - W_Nk*x[n-1] + 2cos(2PIk/N)*y[n-1] - y[n-2]
 */
-dpair goertzelFilter_2(const vector<double> &input, const int k);
-
+dcomp goertzel_2(const vector<double> &input, const int k);
 
 /* 
 goertzel_IIR(const vector<double>&, const int):
@@ -116,6 +115,6 @@ goertzel_IIR(const vector<double>&, const int):
     returns an intermediate output sequence s[n] to then be passed to the FIR portion of the cascade
     DIFF EQ: s[n] = x[n] + 2cos()s[n-1] - s[n-2]
 */
-dcomp goertzel_IIR_FIR(const vector<double> &input, const int k);
+dcomp goertzel_IIR(const vector<double> &input, const int k);
 
 #endif

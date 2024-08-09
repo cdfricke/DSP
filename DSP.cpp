@@ -5,7 +5,7 @@ Latest Revision: 18-June-2024
 Synopsis: Implementation File for DSP function library
 */
 
-#include "DSP.h"
+#include "inc/DSP.h"
 
 extern const double PI = 2 * asin(1);
 
@@ -111,28 +111,27 @@ vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha)
     return output;
 }
 
-vector<dcomp> goertzelFilter_1(const vector<double>& input, const int k)
+dcomp goertzel_1(const vector<double>& input, const int k)
 {
-    vector<dcomp> output;
     dcomp I = -1;
     I = sqrt(I);
     int N = input.size();
 
     dcomp delay0 = 0;
+    dcomp out;
     for (double in : input)
     {
         // convert real number input to complex value with only real component
         dcomp c_in = complex(in, 0.0); 
         // DIFFERENCE EQUATION:
         // y[n] = x[n] + exp(i * 2 * PI * k / N) * y[n - 1]
-        dcomp out = c_in + exp(I * 2.0 * PI * double(k) / double(N))*delay0;
+        out = c_in + exp(I * 2.0 * PI * double(k) / double(N))*delay0;
         delay0 = out;
-        output.push_back(out);
     }
-    return output;
+    return out;
 }
 
-dpair goertzelFilter_2(const vector<double> &input, const int k)
+dcomp goertzel_2(const vector<double> &input, const int k)
 {
     int N = input.size();
 
@@ -171,10 +170,10 @@ dpair goertzelFilter_2(const vector<double> &input, const int k)
         dro0_im = out_Im;   // Im{y[n]} -> Im{y[n-1]}
     }
 
-    return dpair{out_Re, out_Im};
+    return dcomp(out_Re, out_Im);
 }
 
-dcomp goertzel_IIR_FIR(const vector<double>& x, const int k)
+dcomp goertzel_IIR(const vector<double>& x, const int k)
 {
     vector<double> s;
     int N = x.size();

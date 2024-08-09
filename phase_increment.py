@@ -1,10 +1,12 @@
 # Programmer: Connor Fricke (cd.fricke23@gmail.com)
-# File: DSP.py
+# File: phase_increment.py
 # Latest Revision: 25-June-2024
-# Synopsis: Module for various functions related to digital signal processing,
-# FPGAs, Verliog modules, Vivado, etc.
+# Description:
+# If this script is run, it will prompt the user for a desired frequency of the wave generator
+# module (wave_generator.v) which uses the CORDIC IP from AMD to generate continuous wave signals.
+# It returns the required phase increment parameter that should be passed to the wave_generator.v 
+# module in order to produce a signal of that frequency.
 
-import matplotlib.pyplot as plt
 from math import cos, pi
 import numpy as np
 
@@ -12,31 +14,6 @@ import numpy as np
 CLK_FREQ = 100e6 # Hz
 FRAC_BITS = 13    # number of fractional bits used to represent the input phase to CORDIC
 TWO_PI = round(2 * pi * (2**FRAC_BITS))       # two's complement representation of 2pi for phase input
-
-def cos_generator(wave_freq, sample_rate, duration):
-    """
-    Generates a cosine signal of a particular sampling frequency, wave frequency,
-    and total duration. Returns a tuple of lists x and y of the signal.
-    @@ parameters:
-        - wave_freq: desired frequency of the output signal, in Hz
-        - sampling_freq: sets the rate at which the signal value is measured, in Hz
-        - duration: defines the length of the output arrays, in seconds
-    @@ returns:
-        - np.array: array of floats representing discrete time samples of the signal
-        - np.array: array of the corresponding value of the signal at each time sample
-    """
-    time = []
-    signal = []
-    sample_period = 1.0 / sample_rate
-    currentTime = 0
-    currentValue = cos(2*pi*wave_freq*currentTime)
-    while (currentTime < duration):
-        time.append(currentTime)
-        signal.append(currentValue)
-        currentTime += sample_period
-        currentValue = cos(2*pi*wave_freq*currentTime)
-
-    return np.array(time), np.array(signal)
 
 def samplesPerPeriod(PHASE_INC: int) -> int:
     """
@@ -106,10 +83,6 @@ def freqQuantization(SAMPLE_RATE: float) -> np.array:
     
     return np.array(possibleFreqs)
 
-# If this script is run, it will prompt the user for a desired frequency of the wave generator
-# module (wave_generator.v) which uses the CORDIC IP from AMD to generate continuous wave signals.
-# It returns the required phase increment parameter that should be passed to the wave_generator.v module
-# in order to produce a signal of that frequency.
 if __name__ == "__main__":
 
     possibleFreqs = freqQuantization(SAMPLE_RATE=CLK_FREQ)
