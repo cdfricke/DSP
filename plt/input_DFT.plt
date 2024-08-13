@@ -9,7 +9,7 @@ set out 'images/input_DFT.png'
 
 # LABELING
 set title 'Input Signal: Frequency Domain' font 'mono, 20'
-set ylabel 'X(k)' font 'mono, 20' offset -1,0
+set ylabel '|X(k)|' font 'mono, 20' offset -1,0
 set xlabel 'Frequency (MHz)' font 'mono, 20'
 
 # FORMATTING

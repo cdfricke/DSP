@@ -5,6 +5,7 @@ Latest Revision: 18-June-2024
 Synopsis: Implementation File for DSP function library
 */
 
+#include <fstream>
 #include "inc/DSP.h"
 
 extern const double PI = 2 * asin(1);
@@ -52,7 +53,7 @@ vector<double> generateSignal(const vector<double>& t_values, const vector<Signa
         for (SignalComponent c : components)
         {
             // cos takes radians argument so we multiply by 2PI because freq is units of Hz
-            currentValue += c.coeff * cos(2.0 * PI * c.freq * t);
+            currentValue += c.coeff * sin(2.0 * PI * c.freq * t);
         }
         
         output.push_back(currentValue);

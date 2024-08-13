@@ -22,5 +22,5 @@ set rmargin 10
 
 set yrange [-1.5:1.5]
 set xrange [0:1300]
-plot "data/input.dat" using (($1)*1e9):($2) with linesp lw 2 lc black notitle,\
-     "data/output.dat" using (($1)*1e9):($2) with linesp lw 3 lt rgb "red" title "EMA, a = 1/8"
+plot "data/input.dat" using (($1)*1e9):($2) with linesp pt 6 lw 2 lc black notitle,\
+     "data/output.dat" using (($1)*1e9):($2) with linesp pt 6 lw 3 lt rgb "red" title "EMA, a = 1/8"

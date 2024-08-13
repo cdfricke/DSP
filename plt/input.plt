@@ -19,7 +19,7 @@ set lmargin 10
 set rmargin 10
 
 # PLOTTING
-set xrange [0:1200]
+set xrange [0:1260]
 set yrange [(-1.1):(1.1)]
 plot "data/input.dat" using (($1)*1e9):($2) with linesp lc black lw 2 pt 6 ps 0.8 notitle
 
