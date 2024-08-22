@@ -54,8 +54,26 @@ int main()
     {
         fout << t_samples_decimated[i] << " " << signal_decimated[i] << endl;
     }
+    fout.close();
+
+    // * DFT INTEGER VALS *
+    vector<int> k_samples;
+    vector<int> k_samples_decimated;
+    for ( int i = 0; i < N/2; i++ ) k_samples.push_back(i);
+    for ( int i = 0; i < N/16; i++ ) k_samples_decimated.push_back(i);
+
+    vector<dcomp> signal_DFT = DFT(signal, k_samples);
+    vector<dcomp> signal_decimated_DFT = DFT(signal_decimated, k_samples_decimated);
+
+    fout.open("data/3GSPS_DFT.dat");
+    for (int i = 0; i < signal_DFT.size(); i++) 
+        fout << k_samples[i] << " " << abs(signal_DFT[i]) << endl;
+    fout.close();
+    fout.open("data/375MSPS_DFT.dat");
+    for (int i = 0; i < signal_decimated_DFT.size(); i++)
+        fout << k_samples_decimated[i] << " " << abs(signal_decimated_DFT[i]) << endl;
+    fout.close();
 
     int EXIT = system("gnuplot \"plt/RFSoC.plt\"");
-
     return 0;
 }
