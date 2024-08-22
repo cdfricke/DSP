@@ -5,7 +5,6 @@ Latest Revision: 18-June-2024
 Synopsis: Implementation File for DSP function library
 */
 
-#include <fstream>
 #include "inc/DSP.h"
 
 extern const double PI = 2 * asin(1);
@@ -53,7 +52,7 @@ vector<double> generateSignal(const vector<double>& t_values, const vector<Signa
         for (SignalComponent c : components)
         {
             // cos takes radians argument so we multiply by 2PI because freq is units of Hz
-            currentValue += c.coeff * sin(2.0 * PI * c.freq * t);
+            currentValue += c.coeff * sin( (2.0 * PI * c.freq * t) + c.phase);
         }
         
         output.push_back(currentValue);
@@ -61,8 +60,19 @@ vector<double> generateSignal(const vector<double>& t_values, const vector<Signa
     return output;
 }
 
+bool noAliasing(const vector<SignalComponent> &signal, const double SAMPLING_RATE)
+{
+    double maxFreq = signal[0].freq;
 
-vector<dcomp> DFT(const vector<double> &x, const vector<int> &k_range)
+    for (SignalComponent c : signal)
+    {
+        if (c.freq > maxFreq)
+            maxFreq = c.freq;
+    }
+    return (maxFreq < (SAMPLING_RATE / 2.0));
+}
+
+    vector<dcomp> DFT(const vector<double> &x, const vector<int> &k_range)
 {
     vector<dcomp> output;
     dcomp I = -1;

@@ -12,19 +12,16 @@ Synopsis: Header File for DSP function library
 #include <complex>
 #include <vector>
 #include <cmath>
-#include <utility>
 using namespace std;
 
 struct SignalComponent
 {
-    double coeff;
-    double freq;
+    double coeff=1.0;
+    double freq=1.0;
+    double phase=0.0;
 };
 
 typedef complex<double> dcomp;
-typedef std::pair<double,double> dpair;
-
-#define pabs(pair) sqrt(((pair.first)*(pair.first))+((pair.second)*(pair.second)))
 
 // getRandomFloat(const double, const double):
 // Simply returns a single random number generated with the Mersenne Twister (mt19937)
@@ -55,6 +52,12 @@ vector<double> generateSignal(const vector<double> t_Samples);
 // @@ return:
 //  - vector<double> signal: output of function, a signal generated based on signal components
 vector<double> generateSignal(const vector<double> &x_values, const vector<SignalComponent> &components);
+
+/*
+bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RATE):
+    prevents aliasing by returning true if the highest frequency component of the signal is less than the NYQUIST rate
+*/
+bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RATE);
 
 
 // LOWPASS_FIR(const vector<double>&, vector<double>&, const double):

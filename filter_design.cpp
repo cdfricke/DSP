@@ -37,15 +37,7 @@ int main()
         components.push_back(newComponent);
     }
     */
-    // find minimum and maximum components
-    double minFreq = components[0].freq;
-    double maxFreq = components[0].freq;
-    for (SignalComponent c : components)
-    {
-        if (c.freq < minFreq) minFreq = c.freq;
-        if (c.freq > maxFreq) maxFreq = c.freq;
-    }
-    assert(maxFreq < NYQUIST);
+    assert(noAliasing(components, SAMPLING_RATE));
 
     int N = 126;
 
