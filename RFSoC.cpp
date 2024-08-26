@@ -29,7 +29,7 @@ int main()
         t += SAMPLING_PERIOD;
     }
 
-    vector<SignalComponent> components = {{1.0, 500.0e6, 0.0}};
+    vector<SignalComponent> components = {{1.0, 62.5e6, 0.0}};
     vector<double> signal = generateSignal(t_samples, components);
 
     // take sample # 0, 8, 16, 24...
@@ -59,24 +59,24 @@ int main()
         signal_decimated_DFT.push_back(goertzel_IIR(signal_decimated, k));
 
     ofstream fout;
-    fout.open("data/500MHz.dat");
+    fout.open("data/62_5MHz.dat");
     for (int i = 0; i < signal.size(); i++)
     {
         fout << t_samples[i] << " " << signal[i] << endl;
     }
     fout.close();
-    fout.open("data/500MHz_decimated.dat");
+    fout.open("data/62_5MHz_decimated.dat");
     for (int i = 0; i < signal_decimated.size(); i++)
     {
         fout << t_samples_decimated[i] << " " << signal_decimated[i] << endl;
     }
     fout.close();
 
-    fout.open("data/3GSPS_DFT.dat");
+    fout.open("data/3GSPS_DFT_2.dat");
     for (int i = 0; i < signal_DFT.size(); i++) 
         fout << k_samples[i] << " " << abs(signal_DFT[i]) << endl;
     fout.close();
-    fout.open("data/375MSPS_DFT.dat");
+    fout.open("data/375MSPS_DFT_2.dat");
     for (int i = 0; i < signal_decimated_DFT.size(); i++)
         fout << k_samples_decimated[i] << " " << abs(signal_decimated_DFT[i]) << endl;
     fout.close();
