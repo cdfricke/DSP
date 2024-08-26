@@ -42,6 +42,22 @@ int main()
         }
     }
 
+    // * DFT INTEGER VALS *
+    vector<int> k_samples;
+    vector<int> k_samples_decimated;
+    for (int i = 0; i < N / 2; i++)
+        k_samples.push_back(i);
+    for (int i = 0; i < N / 16; i++)
+        k_samples_decimated.push_back(i);
+
+    // ** PERFORM FULL DFT USING DFT() OR goertzel_IIR() FOR DECIMATED AND UNDECIMATED **
+    vector<dcomp> signal_DFT;
+    for (int k : k_samples)
+        signal_DFT.push_back(goertzel_IIR(signal, k));
+    vector<dcomp> signal_decimated_DFT;
+    for (int k : k_samples_decimated)
+        signal_decimated_DFT.push_back(goertzel_IIR(signal_decimated, k));
+
     ofstream fout;
     fout.open("data/500MHz.dat");
     for (int i = 0; i < signal.size(); i++)
@@ -56,15 +72,6 @@ int main()
     }
     fout.close();
 
-    // * DFT INTEGER VALS *
-    vector<int> k_samples;
-    vector<int> k_samples_decimated;
-    for ( int i = 0; i < N/2; i++ ) k_samples.push_back(i);
-    for ( int i = 0; i < N/16; i++ ) k_samples_decimated.push_back(i);
-
-    vector<dcomp> signal_DFT = DFT(signal, k_samples);
-    vector<dcomp> signal_decimated_DFT = DFT(signal_decimated, k_samples_decimated);
-
     fout.open("data/3GSPS_DFT.dat");
     for (int i = 0; i < signal_DFT.size(); i++) 
         fout << k_samples[i] << " " << abs(signal_DFT[i]) << endl;
@@ -75,5 +82,6 @@ int main()
     fout.close();
 
     int EXIT = system("gnuplot \"plt/RFSoC.plt\"");
+    EXIT = system("gnuplot \"plt/RFSoC_dfts.plt\""); 
     return 0;
 }
