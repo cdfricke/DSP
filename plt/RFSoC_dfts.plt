@@ -39,11 +39,11 @@ set lmargin 10
 
 set origin 0.01,0.01
 set xrange [0:(2016/16)]
-set label "k = 42 = N_D/6" font 'mono, 16' at graph 0.387,0.9
+set label "k = 42 = N_D/6" font 'mono, 16' at graph 0.35,0.9
 plot 'data/375MSPS_DFT_2.dat' using 1:2 with impulses lt rgb 'red' lw 5 title '62.5 MHz DFT \@ 375 MSPS, N_D = N_F/8 = 252'
 set origin 0.01,0.42
 set key top right font 'mono, 18' offset 1,0
 set xrange [0:(2016/2)]
 unset label
-set label "k = 42 = N_F/48" font 'mono, 16' at graph 0.125,0.85
+set label "k = 42 = N_F/48" font 'mono, 16' at graph 0.05,0.85
 plot 'data/3GSPS_DFT_2.dat' using 1:2 with impulses lt rgb 'black' lw 5 title '62.5 MHz DFT \@ 3 GSPS, N_F = 2016'
