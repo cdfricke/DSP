@@ -25,37 +25,20 @@ int main()
     double  NYQUIST = SAMPLING_RATE / 2.0;
 
     // *** USER-CREATED SIGNAL ***
-    // to create a signal with sine wave components, you need a vector of SignalComponents,
-    // and a vector of discrete t values which tells us where the samples of the signal are.
-    // The SignalComponent initialized as {0.1, 5.0} corresponds to 0.2sin(5.0t) in the Fourier series, for example.
-    // if we create a signal with all frequencies from zero to nyquist, we should get an impulsive signal
-    vector<SignalComponent> components = {{1.0, (100.0e6 / 6.0)}};
-    /*
-    for (double freq = 1e6; freq < NYQUIST; freq += 100e3)
-    {
-        SignalComponent newComponent{1.0, freq};
-        components.push_back(newComponent);
-    }
-    */
+    vector<SignalComponent> components = {{1.0, (100.0e6 / 6.0), 0.0}};
     assert(noAliasing(components, SAMPLING_RATE));
 
     int N = 126;
 
     // *** SAMPLING CONTROL ***
-    vector<double> t_Samples;
-    double t = 0.0;
-    while (t_Samples.size() < N)
-    {
-        t_Samples.push_back(t);
-        t += SAMPLING_PERIOD;
-    }
+    vector<double> t_Samples = generateTiming(SAMPLING_RATE, N);
+
     // once we have the signal components and sampling control set, we can call generateSignal()
     vector<double> x = generateSignal(t_Samples, components);
 
     // *** FREQUENCY (k) DISCRETIZATION ***
     vector<int> k_vals;
     for (int i = -N / 2; i < (N / 2) + 1; i++) k_vals.push_back(i);
-
 
     // *** DFT ***
     auto startDFT = high_resolution_clock::now();

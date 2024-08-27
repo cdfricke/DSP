@@ -72,7 +72,38 @@ bool noAliasing(const vector<SignalComponent> &signal, const double SAMPLING_RAT
     return (maxFreq < (SAMPLING_RATE / 2.0));
 }
 
-    vector<dcomp> DFT(const vector<double> &x, const vector<int> &k_range)
+vector<double> generateTiming(const double SAMPLING_RATE, const int N)
+{
+    vector<double> sampleTimes;
+    double t = 0.0;
+    for (int i = 0; i < N; i++)
+    {
+        sampleTimes.push_back(t);
+        t += (1.0 / SAMPLING_RATE);
+    }
+    return sampleTimes;
+}
+
+vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR)
+{
+    vector<double> decimated;
+    for (int i = 0; i < signal.size(); i += DECIMATION_FACTOR)
+    {
+        decimated.push_back(signal[i]);
+    }
+    return decimated;
+}
+
+double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE) {
+    double nyquist = SAMPLING_RATE / 2.0;
+    double aliasedFreq = SIGNAL_FREQ;
+    while (abs(aliasedFreq) > nyquist) {
+        aliasedFreq -= SAMPLING_RATE;
+    } 
+    return abs(aliasedFreq);
+}
+
+vector<dcomp> DFT(const vector<double> &x, const vector<int> &k_range)
 {
     vector<dcomp> output;
     dcomp I = -1;

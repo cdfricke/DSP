@@ -1,13 +1,10 @@
 Created by: Connor Fricke (cd.fricke23@gmail.com)
-Collection of various testbenches and programs used while learning how to design
-and implement FIR and IIR filters in software and FPGA applications.
+Collection of various testbenches and programs used for modeling of 
+digital filter behavior, in particular the behavior of the Goertzel algorithm
+in the context of an RFSoC FPGA module.
 
-Data generated with C++, plotted with Gnuplot.
+Data generated with C++, plotted with Gnuplot. For running these programs in VS Code,
+the DSP/.vscode/tasks.json file was used to configure compilation with g++.
 
-For Windows, all gnuplot scripts (.plt files) must call "set terminal windows".
-For Linux, all gnuplot scripts (.plt files) must instead call "set terminal x11".
-Note: There are in fact some cross-platform terminals that can be used alternatively, but the native ones to each platform work best.
-
-Program successfully compiled and ran with:
-PowerShell > g++ -g filter_design.cpp DSP.cpp -o filter_design.exe -O3 -I {currentDirectory} -std=c++17
-Bash > g++ -g filter_design.cpp DSP.cpp -o filter_design.x -O3 -I {currentDirectory} -std=c++17
+DSP.h is my personal library, which contains quite a few functions and digital filters
+that have been necessary in writing the main programs.

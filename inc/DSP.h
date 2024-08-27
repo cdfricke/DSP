@@ -59,6 +59,24 @@ bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RAT
 */
 bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RATE);
 
+/*
+generateTiming(const double SAMPLING_RATE, const int N)
+    generates a vector of time values for samples based on a sampling rate and signal duration 
+    in terms of number of samples (N)
+*/
+vector<double> generateTiming(const double SAMPLING_RATE, const int N);
+
+/*
+vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR)
+    takes every n-th element of the input vector and adds it to the returned vector of resulting floor(len(signal)/n)
+*/
+vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR);
+
+/*
+double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE)
+    returns the expected aliased frequency of a signal given a sampling rate lower than the signal frequency.
+*/
+double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE);
 
 // LOWPASS_FIR(const vector<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an FIR Filter
@@ -70,7 +88,6 @@ bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RAT
 // @@ return:
 //  - vector<double> output: resulting filtered signal
 vector<double> LOWPASS_FIR(const vector<double> &input, const double alpha);
-
 
 // AVERAGER_IIR(const vector<double>&, vector<double>&, const double):
 // Takes in an input vector and output vector as parameters. Applies an IIR Filter

@@ -18,18 +18,11 @@ int main() {
     const int N = 126;
     const int k = 21;
     const double SAMPLING_RATE = 100.0e6;
-    const double SAMPLING_PERIOD = 1.0/SAMPLING_RATE;
 
     ofstream fout("data/phase_test.dat");
 
     // *** SAMPLING CONTROL ***
-    vector<double> t_Samples;
-    double t = 0.0;
-    while (t_Samples.size() < N)
-    {
-        t_Samples.push_back(t);
-        t += SAMPLING_PERIOD;
-    }
+    vector<double> t_Samples = generateTiming(SAMPLING_RATE, N);
 
     vector<double> signal;
     for (double phi = 0.0; phi < 2*PI; phi += 0.1)

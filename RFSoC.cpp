@@ -16,31 +16,18 @@ extern const double PI;
 int main()
 {
     const int N = 2016;     // if we decimate by 8, we get N = 252
-    const int k = 21;       // TBD
     const double SAMPLING_RATE = 3.0e9;     // 3 GSPS from ADC
-    const double SAMPLING_PERIOD = 1.0 / SAMPLING_RATE;
     const int DECIMATION_FACTOR = 8;
 
     // * SAMPLING CONTROL *
-    vector<double> t_samples;
-    double t = 0.0;
-    for (int i = 0; i < N; i++) {
-        t_samples.push_back(t);
-        t += SAMPLING_PERIOD;
-    }
+    vector<double> t_samples = generateTiming(SAMPLING_RATE, N);
 
     vector<SignalComponent> components = {{1.0, 62.5e6, 0.0}};
     vector<double> signal = generateSignal(t_samples, components);
 
     // take sample # 0, 8, 16, 24...
-    vector<double> signal_decimated;
-    vector<double> t_samples_decimated;
-    for (int i = 0; i < N; i++) {
-        if ( (i % DECIMATION_FACTOR) == 0 ) {
-            signal_decimated.push_back(signal[i]);
-            t_samples_decimated.push_back(t_samples[i]);
-        }
-    }
+    vector<double> signal_decimated = decimateSignal(signal, DECIMATION_FACTOR);
+    vector<double> t_samples_decimated = decimateSignal(t_samples, DECIMATION_FACTOR);
 
     // * DFT INTEGER VALS *
     vector<int> k_samples;
