@@ -3,7 +3,7 @@ Programmer: Connor Fricke (cd.fricke23@gmail.com)
 File: aliasing.cpp
 Latest Revision: 27-Aug-2024
 Desc: Main program for determining frequencies in the range of 0-1500MHz which alias to
-62.5 MHz with a sampling rate of 375 MSPS such that k/N = 1/6 in the Goertzel algorithm.
+31.75 MHz with a sampling rate of 375/2 = 187.5 MSPS such that k/N = 1/6 in the Goertzel algorithm.
 */
 
 #include <iostream>
@@ -15,22 +15,22 @@ using std::to_string;
 
 int main() {
 
-    const int N_F = 2016;               // the length of our Goertzel window for the "Full" 3 GSPS sampling rate
-    const int DEC_FACTOR = 8;           // decimation factor, i.e. w take one out of every DEC_FACTOR samples for the Goertzel alg
-    const int N_D = N_F/DEC_FACTOR;     // the length of our actual Goertzel window at the RFSoC clock rate 375 MSPS
-    const double ADC_CLK = 3.0e9;       // ADC Sample Rate
-    const double RFSoC_CLK = 375.0e6;   // RFSoC system clock rate, 375 MHz
+    const int N_F = 2016;                       // the length of our Goertzel window for the "Full" 3 GSPS sampling rate
+    const int DEC_FACTOR = 16;                  // decimation factor, i.e. w take one out of every DEC_FACTOR samples for the Goertzel alg
+    const int N_D = N_F/DEC_FACTOR;             // the length of our actual Goertzel window at the RFSoC clock rate 375 MSPS
+    const double ADC_CLK = 3.0e9;               // ADC Sample Rate
+    const double GZ_CLK = ADC_CLK/DEC_FACTOR;   // Goertzel Sample Rate ( RFSoC CLK / 2 )
 
     
     // * determines all frequencies in the range (increment of 100 kHz) which alias to within EPSILON Hz of the target frequency.
-    double TARGET_FREQ = 62.5e6;    // target frequency resulting from aliasing of higher frequencies
+    double TARGET_FREQ = 31.75e6;    // target frequency resulting from aliasing of higher frequencies
     double EPSILON = 0.1;           // error range for resulting aliased frequencies
-    double FREQ_INC = 100.0e3;      // frequency step  
+    double FREQ_INC = 50.0e3;      // frequency step  
 
     vector<double> validFreqs;
     
     for (double freq = 0.0; freq <= (ADC_CLK/2.0); freq += FREQ_INC) {
-        double aliasedFreq = aliasesTo(freq, RFSoC_CLK);
+        double aliasedFreq = aliasesTo(freq, GZ_CLK);
         // check that the aliased frequency is within +-EPSILON of the target
         if (abs(aliasedFreq - TARGET_FREQ) < EPSILON) {
             validFreqs.push_back(freq);
@@ -40,7 +40,7 @@ int main() {
 
     /* SAMPLE TIMING CONTROL */
     vector<double> adc_sample_times = generateTiming(ADC_CLK, N_F);  // time values for samples produced by ADC
-    vector<double> gz_sample_times = generateTiming(RFSoC_CLK, N_D); // time values for samples detected by Goertzel module (1 of every 8)
+    vector<double> gz_sample_times = generateTiming(GZ_CLK, N_D); // time values for samples detected by Goertzel module (1 of every 8)
 
     ofstream fout;
     for (double freq : validFreqs) {
