@@ -15,6 +15,8 @@ using std::to_string;
 
 int main() {
 
+    bool WRITE_DATA = false;
+
     const int N_F = 2016;                       // the length of our Goertzel window for the "Full" 3 GSPS sampling rate
     const int DEC_FACTOR = 16;                  // decimation factor, i.e. w take one out of every DEC_FACTOR samples for the Goertzel alg
     const int N_D = N_F/DEC_FACTOR;             // the length of our actual Goertzel window at the RFSoC clock rate 375 MSPS
@@ -34,7 +36,6 @@ int main() {
         // check that the aliased frequency is within +-EPSILON of the target
         if (abs(aliasedFreq - TARGET_FREQ) < EPSILON) {
             validFreqs.push_back(freq);
-            cout << freq << endl;
         }
     }
 
@@ -43,25 +44,43 @@ int main() {
     vector<double> gz_sample_times = generateTiming(GZ_CLK, N_D); // time values for samples detected by Goertzel module (1 of every 8)
 
     ofstream fout;
-    for (double freq : validFreqs) {
+    vector<SignalComponent> components;
+    vector<double> decSignal;
+    vector<double> fullSignal;
+
+    for (double freq : validFreqs)
+    {
         // generate signal of each frequency at both ADC and RFSoC clk rates
-        vector<SignalComponent> components = {{1.0, freq, 0.0}};
-        vector<double> decSignal = generateSignal(gz_sample_times, components);
-        vector<double> fullSignal = generateSignal(adc_sample_times, components);
+        components = {{1.0, freq, 0.0}};
+        decSignal = generateSignal(gz_sample_times, components);
+        fullSignal = generateSignal(adc_sample_times, components);
 
         // output decimated signal to file
-        string FILENAME = "data/aliasing/signal_" + to_string(int(freq / 1e5)) + ".dat";
-        fout.open(FILENAME);
-        for (int i = 0; i < decSignal.size(); i++)
-            fout << i << " " << gz_sample_times[i] << " " << decSignal[i] << endl;
-        fout.close();
-        // output full signal to file
-        FILENAME = "data/aliasing/signal_" + to_string(int(freq / 1e5)) + "_full.dat";
-        fout.open(FILENAME);
-        for (int i = 0; i < fullSignal.size(); i++)
-            fout << i << " " << adc_sample_times[i] << " " << fullSignal[i] << endl;
-        fout.close();
+        if (WRITE_DATA) {
+            string FILENAME = "data/aliasing/signal_" + to_string(int(freq / 1e5)) + ".dat";
+            fout.open(FILENAME);
+            for (int i = 0; i < decSignal.size(); i++)
+                fout << i << " " << gz_sample_times[i] << " " << decSignal[i] << endl;
+            fout.close();
+            // output full signal to file
+            FILENAME = "data/aliasing/signal_" + to_string(int(freq / 1e5)) + "_full.dat";
+            fout.open(FILENAME);
+            for (int i = 0; i < fullSignal.size(); i++)
+                fout << i << " " << adc_sample_times[i] << " " << fullSignal[i] << endl;
+            fout.close();
+        }   
     }
+
+    cout << "ADC CLK: " << ADC_CLK / (1.0e9) << " GSPS.\n";
+    cout << "GZ (Goertzel) CLK: " << GZ_CLK / (1.0e6) << " MHz.\n";
+    cout << "ADC Signal Length: " << fullSignal.size() << " samples.\n";
+    cout << "GZ Signal Length: " << decSignal.size() << " samples.\n";
+    cout << "Decimation: GZ Algorithm takes one of every " << DEC_FACTOR << " samples from ADC.\n";
+
+    dcomp cw_detection = goertzel_IIR(decSignal, decSignal.size()/6);
+    cout << "Goertzel CW Detection Results: X(k) = " 
+        << cw_detection.real() << " + " << cw_detection.imag() 
+        << "i, |X(k)| = " << abs(cw_detection) << endl;
 
     return 0;
 }
