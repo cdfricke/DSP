@@ -23,7 +23,7 @@ int main() {
 
     
     // * determines all frequencies in the range (increment of 100 kHz) which alias to within EPSILON Hz of the target frequency.
-    double TARGET_FREQ = 31.75e6;    // target frequency resulting from aliasing of higher frequencies
+    double TARGET_FREQ = 31.25e6;    // target frequency resulting from aliasing of higher frequencies
     double EPSILON = 0.1;           // error range for resulting aliased frequencies
     double FREQ_INC = 50.0e3;      // frequency step  
 
