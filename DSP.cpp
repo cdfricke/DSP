@@ -41,7 +41,6 @@ vector<double> generateSignal(const vector<double> t_Samples)
     return output;
 }
 
-
 vector<double> generateSignal(const vector<double>& t_values, const vector<SignalComponent> &components)
 {
     vector<double> output;
@@ -94,7 +93,8 @@ vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_
     return decimated;
 }
 
-double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE) {
+double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE) 
+{
     double nyquist = SAMPLING_RATE / 2.0;
     double aliasedFreq = SIGNAL_FREQ;
     while (abs(aliasedFreq) > nyquist) {
@@ -164,7 +164,7 @@ dcomp goertzel_1(const vector<double>& input, const int k)
     for (double in : input)
     {
         // convert real number input to complex value with only real component
-        dcomp c_in = complex(in, 0.0); 
+        dcomp c_in = complex<double>(in, 0.0); 
         // DIFFERENCE EQUATION:
         // y[n] = x[n] + exp(i * 2 * PI * k / N) * y[n - 1]
         out = c_in + exp(I * 2.0 * PI * double(k) / double(N))*delay0;
