@@ -7,7 +7,7 @@ then passing each signal through the Goertzel filter in order to create a plot o
 and imaginary components of X(k) for k = 21, N = 126 for various phase shifts.
 */
 
-#include "inc/DSP.h"
+#include "DSP.h"
 #include <fstream>
 #include <cstdlib>
 #include <iostream>

@@ -7,7 +7,7 @@ with 3 GSPS signal (@ 500 MHz) for 375 MHz clock (decimation-in-time of signal b
 to illustrate aliasing results. Expected peak frequency detection at 125 MHz (k = ) 
 */
 
-#include "inc/DSP.h"
+#include "DSP.h"
 #include <fstream>
 #include <cstdlib>
 #include <iostream>

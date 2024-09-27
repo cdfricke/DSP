@@ -3,7 +3,7 @@
 #include <cstdlib>      // for system()
 #include <cassert>      // for assert()
 #include <chrono>       // for timing with high res clock
-#include "inc/DSP.h"    // my personal DSP library for this project
+#include "DSP.h"    // my personal DSP library for this project
 
 using namespace std;
 using chrono::duration_cast, chrono::microseconds, chrono::high_resolution_clock;
