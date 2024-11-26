@@ -13,7 +13,7 @@
                 "-O3",
                 "-std=c++17",
                 "-I",
-                "${fileDirname}"
+                "${fileDirname}\\inc"
             ],
             "options": {
                 "cwd": "${fileDirname}"

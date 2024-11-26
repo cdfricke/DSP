@@ -5,19 +5,21 @@ Latest Revision: 18-June-2024
 Synopsis: Header File for DSP function library
 */
 
+/*
 #ifdef _WIN32
 
-    /* Define ADD_EXPORTS when building DLL */
+    // Define ADD_EXPORTS when building DLL
     #ifdef DSP_EXPORTS
         #define DSPAPI __declspec(dllexport)
     #else
         #define DSPAPI __declspec(dllimport)
     #endif
     #define DSPCALL __cdecl
-#else /*_WIN32 not defined (some other OS)*/
+#else // _WIN32 not defined (some other OS)
     #define DSPAPI
     #define DSPCALL
 #endif
+*/
 
 #ifndef DSP_H
     #define DSP_H
@@ -26,14 +28,14 @@ Synopsis: Header File for DSP function library
     #include <complex>
     #include <vector>
     #include <cmath>
-    using namespace std;
+    using std::vector, std::complex;
 
     #ifdef __cplusplus
     extern "C"
     {
     #endif
 
-    struct DSPAPI SignalComponent
+    struct SignalComponent
     {
         double coeff=1.0;
         double freq=1.0;
@@ -50,7 +52,7 @@ Synopsis: Header File for DSP function library
             const double lower: lower bound to uniform distribution
             const double upper: upper bound to uniform distribution
     */
-    DSPAPI double DSPCALL getRandomFloat(const double lower, const double upper);
+    double getRandomFloat(const double lower, const double upper);
 
     /*
     generateSignal(vector<double>& signal, const vector<SignalComponent>&):
@@ -62,32 +64,32 @@ Synopsis: Header File for DSP function library
         @@ return:
             vector<double> signal: output of function, a signal generated based on signal components
     */
-    DSPAPI vector<double> DSPCALL generateSignal(const vector<double> &x_values, const vector<SignalComponent> &components);
+    vector<double> generateSignal(const vector<double> &x_values, const vector<SignalComponent> &components);
 
     /*
     bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RATE):
         prevents aliasing by returning true if the highest frequency component of the signal is less than the NYQUIST rate
     */
-    DSPAPI bool DSPCALL noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RATE);
+    bool noAliasing(const vector<SignalComponent>& signal, const double SAMPLING_RATE);
 
     /*
     generateTiming(const double SAMPLING_RATE, const int N)
         generates a vector of time values for samples based on a sampling rate and signal duration 
         in terms of number of samples (N)
     */
-    DSPAPI vector<double> DSPCALL generateTiming(const double SAMPLING_RATE, const int N);
+    vector<double> generateTiming(const double SAMPLING_RATE, const int N);
 
     /*
     vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR)
         takes every n-th element of the input vector and adds it to the returned vector of resulting floor(len(signal)/n)
     */
-    DSPAPI vector<double> DSPCALL decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR);
+    vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR);
 
     /*
     double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE)
         returns the expected aliased frequency of a signal given a sampling rate lower than the signal frequency.
     */
-    DSPAPI double DSPCALL aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE);
+    double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE);
 
     /*
     LOWPASS_FIR(const vector<double>&, vector<double>&, const double):
@@ -100,7 +102,7 @@ Synopsis: Header File for DSP function library
         @@ return:
             vector<double> output: resulting filtered signal
     */
-    DSPAPI vector<double> DSPCALL LOWPASS_FIR(const vector<double> &input, const double alpha);
+    vector<double> LOWPASS_FIR(const vector<double> &input, const double alpha);
 
     /*AVERAGER_IIR(const vector<double>&, vector<double>&, const double) :
         Takes in an input vector and output vector as parameters. Applies an IIR Filter
@@ -114,7 +116,7 @@ Synopsis: Header File for DSP function library
         @@ return:
             vector<double>& output: resulting filtered signal
     */
-    DSPAPI vector<double> DSPCALL AVERAGER_IIR(const vector<double>& input, const double alpha);
+    vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha);
 
     /*
     DFT(const vector<double>&, const vector<double>&, vector<dcomp> out):
@@ -125,7 +127,7 @@ Synopsis: Header File for DSP function library
         @@ return:
             vector<complex<double>>& output: resulting transformed signal. each value is a complex number with real and imaginary components.
     */
-    DSPAPI vector<dcomp> DSPCALL DFT(const vector<double>& x, const vector<int>& k_range);
+    vector<dcomp> DFT(const vector<double>& x, const vector<int>& k_range);
 
     /*
     goertzelFilter_1(const vector<double>&, const int):
@@ -138,7 +140,7 @@ Synopsis: Header File for DSP function library
         @@ return:
             complex<double> out: result of Goertzel filtering on input signal
     */
-    DSPAPI dcomp DSPCALL goertzel_1(const vector<double>& input, const int k);
+    dcomp goertzel_1(const vector<double>& input, const int k);
 
     /*
     goertzelFilter_2(const vector<double>&, const int):
@@ -152,7 +154,7 @@ Synopsis: Header File for DSP function library
         @@ return:
             complex<double> out: result of Goertzel filtering on input signal
     */
-    DSPAPI dcomp DSPCALL goertzel_2(const vector<double> &input, const int k);
+    dcomp goertzel_2(const vector<double> &input, const int k);
 
     /* 
     goertzel_IIR(const vector<double>&, const int):
@@ -168,7 +170,7 @@ Synopsis: Header File for DSP function library
         @@ return:
             complex<double> out: result of Goertzel filtering on input signal
     */
-    DSPAPI dcomp DSPCALL goertzel_IIR(const vector<double> &input, const int k);
+    dcomp goertzel_IIR(const vector<double> &input, const int k);
 
     #ifdef __cplusplus
     }

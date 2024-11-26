@@ -11,7 +11,7 @@ from math import cos, pi
 import numpy as np
 
 # global constants
-CLK_FREQ = 100e6 # Hz
+CLK_FREQ = 375e6 # Hz
 FRAC_BITS = 13    # number of fractional bits used to represent the input phase to CORDIC
 TWO_PI = round(2 * pi * (2**FRAC_BITS))       # two's complement representation of 2pi for phase input
 

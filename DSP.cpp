@@ -7,18 +7,18 @@ Synopsis: Implementation File for DSP function library
 
 #include "DSP.h"
 
-extern DSPAPI const double PI = 2 * asin(1);
+extern const double PI = 2 * asin(1);
 
-double DSPCALL getRandomFloat(const double lower, const double upper)
+double getRandomFloat(const double lower, const double upper)
 {
-    random_device rd;
-    mt19937 generator(rd());
-    uniform_real_distribution<double> distribution(lower, upper);
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_real_distribution<double> distribution(lower, upper);
 
     return distribution(generator);
 }
 
-vector<double> DSPCALL generateSignal(const vector<double>& t_values, const vector<SignalComponent> &components)
+vector<double> generateSignal(const vector<double>& t_values, const vector<SignalComponent> &components)
 {
     vector<double> output;
     for (double t : t_values)
@@ -36,7 +36,7 @@ vector<double> DSPCALL generateSignal(const vector<double>& t_values, const vect
     return output;
 }
 
-bool DSPCALL noAliasing(const vector<SignalComponent> &signal, const double SAMPLING_RATE)
+bool noAliasing(const vector<SignalComponent> &signal, const double SAMPLING_RATE)
 {
     double maxFreq = signal[0].freq;
 
@@ -48,7 +48,7 @@ bool DSPCALL noAliasing(const vector<SignalComponent> &signal, const double SAMP
     return (maxFreq < (SAMPLING_RATE / 2.0));
 }
 
-vector<double> DSPCALL generateTiming(const double SAMPLING_RATE, const int N)
+vector<double> generateTiming(const double SAMPLING_RATE, const int N)
 {
     vector<double> sampleTimes;
     double t = 0.0;
@@ -60,7 +60,7 @@ vector<double> DSPCALL generateTiming(const double SAMPLING_RATE, const int N)
     return sampleTimes;
 }
 
-vector<double> DSPCALL decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR)
+vector<double> decimateSignal(const vector<double> signal, const int DECIMATION_FACTOR)
 {
     vector<double> decimated;
     for (int i = 0; i < signal.size(); i += DECIMATION_FACTOR)
@@ -70,7 +70,7 @@ vector<double> DSPCALL decimateSignal(const vector<double> signal, const int DEC
     return decimated;
 }
 
-double DSPCALL aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE) 
+double aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE) 
 {
     double nyquist = SAMPLING_RATE / 2.0;
     double aliasedFreq = SIGNAL_FREQ;
@@ -80,7 +80,7 @@ double DSPCALL aliasesTo(const double SIGNAL_FREQ, const double SAMPLING_RATE)
     return abs(aliasedFreq);
 }
 
-vector<dcomp> DSPCALL DFT(const vector<double> &x, const vector<int> &k_range)
+vector<dcomp> DFT(const vector<double> &x, const vector<int> &k_range)
 {
     vector<dcomp> output;
     dcomp I = -1;
@@ -101,7 +101,7 @@ vector<dcomp> DSPCALL DFT(const vector<double> &x, const vector<int> &k_range)
     return output;
 }
 
-vector<double> DSPCALL LOWPASS_FIR(const vector<double>& input, const double alpha)
+vector<double> LOWPASS_FIR(const vector<double>& input, const double alpha)
 {
     vector<double> output;
     double delay0 = 0;
@@ -115,7 +115,7 @@ vector<double> DSPCALL LOWPASS_FIR(const vector<double>& input, const double alp
 }
 
 
-vector<double> DSPCALL AVERAGER_IIR(const vector<double>& input, const double alpha)
+vector<double> AVERAGER_IIR(const vector<double>& input, const double alpha)
 {
     vector<double> output;
     double delay0 = 0;
@@ -130,7 +130,7 @@ vector<double> DSPCALL AVERAGER_IIR(const vector<double>& input, const double al
     return output;
 }
 
-dcomp DSPCALL goertzel_1(const vector<double>& input, const int k)
+dcomp goertzel_1(const vector<double>& input, const int k)
 {
     dcomp I = -1;
     I = sqrt(I);
@@ -150,7 +150,7 @@ dcomp DSPCALL goertzel_1(const vector<double>& input, const int k)
     return out;
 }
 
-dcomp DSPCALL goertzel_2(const vector<double> &input, const int k)
+dcomp goertzel_2(const vector<double> &input, const int k)
 {
     int N = input.size();
 
@@ -192,7 +192,7 @@ dcomp DSPCALL goertzel_2(const vector<double> &input, const int k)
     return dcomp(out_Re, out_Im);
 }
 
-dcomp DSPCALL goertzel_IIR(const vector<double>& x, const int k)
+dcomp goertzel_IIR(const vector<double>& x, const int k)
 {
     vector<double> s;
     int N = x.size();
