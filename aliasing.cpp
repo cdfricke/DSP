@@ -9,9 +9,10 @@ Desc: Main program for determining frequencies in the range of 0-1500MHz which a
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "inc/DSP.h"
+#include "DSP.h"
 
-using std::to_string;
+using namespace DSP;
+using std::vector, std::ofstream, std::cout, std::endl, std::string, std::to_string;
 
 int main() {
 

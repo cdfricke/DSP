@@ -11,6 +11,9 @@ and imaginary components of X(k) for k = 21, N = 126 for various phase shifts.
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
+
+using namespace DSP;
+
 extern const double PI;
 
 int main() {
@@ -19,22 +22,23 @@ int main() {
     const int k = 21;
     const double SAMPLING_RATE = 100.0e6;
 
-    ofstream fout("data/phase_test.dat");
+    std::ofstream fout("data/phase_test.dat");
 
     // *** SAMPLING CONTROL ***
-    vector<double> t_Samples = generateTiming(SAMPLING_RATE, N);
+    std::vector<double> t_Samples = generateTiming(SAMPLING_RATE, N);
 
-    vector<double> signal;
+    std::vector<double> signal;
     for (double phi = 0.0; phi < 2*PI; phi += 0.1)
     {
-        vector<SignalComponent> components = {{1.0, (SAMPLING_RATE / 6.0), phi}};
+        std::vector<SignalComponent> components = {{1.0, (SAMPLING_RATE / 6.0), phi}};
         signal = generateSignal(t_Samples, components);
         dcomp Xk = goertzel_IIR(signal, k);
-        fout << phi << " " << Xk.real() << " " << Xk.imag() << endl;
+        fout << phi << " " << Xk.real() << " " << Xk.imag() << std::endl;
     }
 
     int EXIT = system("gnuplot \"plt/phase_test.plt\"");
-    if (EXIT) cerr << "Failed to plot phase test results." << endl;
+    if (EXIT)
+        std::cerr << "Failed to plot phase test results." << std::endl;
 
     return 0;
 }
