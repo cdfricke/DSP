@@ -24,6 +24,7 @@ int main() {
 
     for (double freq = 22.25e6; freq < 40.25e6; freq += 0.01e6) {
         DSP::SignalComponent component;
+        component.coeff = 1027.3/2048.0;
         component.freq = freq;
         vector<double> signal = DSP::generateSignal(t, {component});
         
@@ -32,9 +33,8 @@ int main() {
         double Xk_re = Xk.real();
         double Xk_im = Xk.imag();
         double Xk_mag = sqrt((Xk_re * Xk_re) + (Xk_im * Xk_im));
-        double Xk_err = (Xk_mag - 63.0) / 63.0;
 
-        fout << freq << ' ' << Xk_re << ' ' << Xk_im << ' ' << Xk_mag << ' ' << Xk_err << '\n';
+        fout << freq << ' ' << Xk_re << ' ' << Xk_im << ' ' << Xk_mag << '\n';
     }
 
     return 0;

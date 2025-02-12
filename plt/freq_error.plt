@@ -10,7 +10,7 @@ set out "images/freq_error.png"
 set title "Frequency Response of |X(k)|" font "mono, 24"
 set xlabel "Input Frequency (MHz)" font "mono, 24" offset 0,-2
 set ylabel "|X(k)|" font "mono, 24" offset -2,0
-set object circle at 31.25,63 radius char 0.8 fillstyle empty border lc rgb 'red' lw 4
+set object 1 rect from 30.95,29.0 to 31.55,32.0 front fs empty border rgb "black"
 
 # FORMATTING
 set xtics 23.25,2 font "mono, 20" nomirror offset 0,-1
@@ -18,9 +18,27 @@ set ytics font "mono, 20" nomirror
 set size ratio 0.6
 set lmargin 10
 set rmargin 5
-set tmargin 20
-set bmargin 20
+set tmargin 15
+set bmargin 15
+set key font "mono, 14"
 
 # PLOTTING
 set xrange [25.25:37.25]
-plot "data/freq_error.dat" using (($1)/1.0e6):($4) with lines lc black lw 3 notitle
+plot "data/freq_error.dat" using (($1)/1.0e6):($4) with lines lc black lw 2 title "Simulated",\
+     "data/27-JAN-2025.csv" using ($1):($2):($3) with yerrorbars lc rgb "blue" pt 4 title "Observed"
+
+set out "images/freq_error_zoom.png"
+set title "Frequency Response of |X(k)|" font "mono, 24"
+set xlabel "Input Frequency (MHz)" font "mono, 24" offset 0,-2
+set ylabel "|X(k)|" font "mono, 24" offset -2,0
+set xtics 23.25,0.25 font "mono, 20" nomirror offset 0,-1
+set ytics font "mono, 20" nomirror
+set size ratio 0.6
+set lmargin 10
+set rmargin 5
+set tmargin 20
+set bmargin 20
+set xrange [30.95:31.55]
+set yrange [29.0:32.0]
+plot "data/freq_error.dat" using (($1)/1.0e6):($4) with lines lc black lw 1 title "Simulated",\
+     "data/27-JAN-2025.csv" using ($1):($2):($3) with yerrorbars lc rgb "blue" pt 4 title "Observed"
