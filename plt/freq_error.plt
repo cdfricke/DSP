@@ -26,7 +26,7 @@ set key font "mono, 24"
 # PLOTTING
 set xrange [25.25:37.25]
 plot "data/freq_error.dat" using (($1)/1.0e6):($4) with lines lc black lw 2 title "Simulated",\
-     "data/27-JAN-2025.csv" using ($1):($2):($3) with yerrorbars lc rgb "blue" pt 4 title "Observed"
+     "data/19-FEB-2025.csv" using ($1):($2):($3) with yerrorbars lc rgb "blue" pt 4 title "Observed"
 
 set out "images/freq_error_zoom.png"
 set title "Frequency Response of |X(k)|" font "mono, 24"
@@ -44,4 +44,4 @@ set key font "mono, 24"
 set xrange [30.95:31.55]
 set yrange [29.0:32.0]
 plot "data/freq_error.dat" using (($1)/1.0e6):($4) with lines lc black lw 2 title "Simulated",\
-     "data/27-JAN-2025.csv" using ($1):($2):($3) with yerrorbars lc rgb "blue" lw 2 pt 4 ps 1.2 title "Observed"
+     "data/19-FEB-2025.csv" using ($1):($2):($3) with yerrorbars lc rgb "blue" lw 2 pt 4 ps 1.2 title "Observed"
