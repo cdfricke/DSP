@@ -8,3 +8,7 @@ the DSP/.vscode/tasks.json file was used to configure compilation with g++.
 
 DSP.h is my personal library, which contains quite a few functions and digital filters
 that have been necessary in writing the main programs.
+
+The majority of the content (code, plots, images, scripts) within this repository are
+created for the purpose of data analysis relating to my undergraduate thesis:
+"Resource-Efficient DFTs via the Goertzel Algorithm for Continuous-Wave Detection with FPGAs"
